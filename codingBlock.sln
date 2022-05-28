@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codingBlock", "codingBlock\codingBlock.csproj", "{1CF06904-7BAC-459F-9E19-9B5C9B34AA0B}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "BCFK_Setup", "BCFK_Setup\BCFK_Setup.vdproj", "{9AA64CCC-2C4A-45A1-94B1-EAADDEDAA6CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CF06904-7BAC-459F-9E19-9B5C9B34AA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CF06904-7BAC-459F-9E19-9B5C9B34AA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CF06904-7BAC-459F-9E19-9B5C9B34AA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CF06904-7BAC-459F-9E19-9B5C9B34AA0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AA64CCC-2C4A-45A1-94B1-EAADDEDAA6CA}.Debug|Any CPU.ActiveCfg = Debug
+		{9AA64CCC-2C4A-45A1-94B1-EAADDEDAA6CA}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64B91390-27AA-4B42-A63E-9710C738474B}
+	EndGlobalSection
+EndGlobal
