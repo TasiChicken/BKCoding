@@ -9,6 +9,7 @@ namespace codingBlock
         #region Const
         
         private const int _playBtnPadding = 5;
+        private const int mainPnlMinWidth = 150;
 
         #endregion
 
@@ -63,6 +64,13 @@ namespace codingBlock
             //To do read file
 
             addBlockTypeBtn();
+        }
+
+        private void _blocksPnl_Resize(object sender, EventArgs e)
+        {
+            int maxWidth = this.Width - _blocksPnl.Left - mainPnlMinWidth;
+            if (_blocksPnl.Width > maxWidth) _blocksPnl.Width = maxWidth;
+            else if (_blocksPnl.Width < mainPnlMinWidth) _blocksPnl.Width = mainPnlMinWidth;
         }
 
         #region Menu Strip
@@ -273,9 +281,16 @@ namespace codingBlock
                 button.isChecked = i == index;
             }
 
+            _blocksPnl.BorderStyle = BorderStyle.None;
+            _splitter.BackColor = Colors.Black26;
+            _splitter.Width = 10;
+
             CodeBlock c = new CodeBlock(blockTypes[index].color, "int # = #;");
             _blocksPnl.Controls.Add(c);
             c.Location = new Point(5, 5);
+            c = new CodeBlock(blockTypes[index].color, "int # = #;", false);
+            _blocksPnl.Controls.Add(c);
+            c.Location = new Point(5, 50);
         }
 
         #endregion

@@ -51,6 +51,7 @@ namespace codingBlock
         #endregion
 
         #region Point
+
         public static Point Add(Point a, Point b)
         {
             return new Point(a.X + b.X, a.Y + b.Y);
@@ -94,6 +95,7 @@ namespace codingBlock
             if (control.Equals(control.TopLevelControl) || control.Parent == null) return initialPoint;
             else return PositionInTopLevel(control.Parent, Vector2Helper.Add(initialPoint, control.Location));
         }
+
         #endregion
     }
 

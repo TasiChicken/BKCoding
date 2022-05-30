@@ -100,11 +100,17 @@
     <Compile Include="Edit\BCFK_ContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Edit\CodeBlock.cs">
+    <Compile Include="Edit\Block\CodeBlock.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Edit\CodeBlockContainer.cs">
+    <Compile Include="Edit\Block\CodeBlockContainer.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Edit\Block\InputBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Edit\Block\InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Select\SelectProjectForm.cs">
       <SubType>Form</SubType>
@@ -151,6 +157,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Universal\ProjectHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Edit\Block\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Edit\EditForm.resx">
       <DependentUpon>EditForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -173,7 +182,6 @@
     <EmbeddedResource Include="Select\SelectProjectForm.resx">
       <DependentUpon>SelectProjectForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="codingBlock_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -226,6 +234,7 @@
     <Content Include="Icon.ico" />
     <None Include="Resources\Icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Text.Json.6.0.4\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.4\build\System.Text.Json.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

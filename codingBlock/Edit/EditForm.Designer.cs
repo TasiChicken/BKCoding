@@ -44,11 +44,11 @@ namespace codingBlock
             this._cutCmsi = new System.Windows.Forms.ToolStripMenuItem();
             this._deleteCmsi = new System.Windows.Forms.ToolStripMenuItem();
             this._blocksPnl = new System.Windows.Forms.Panel();
-            this.splitter1 = new System.Windows.Forms.Splitter();
+            this._splitter = new System.Windows.Forms.Splitter();
             this._codePnl = new System.Windows.Forms.Panel();
-            this._header = new Header();
-            this._fileCms = new BCFK_ContextMenuStrip();
-            this._editCms = new BCFK_ContextMenuStrip();
+            this._header = new codingBlock.Header();
+            this._fileCms = new codingBlock.BCFK_ContextMenuStrip();
+            this._editCms = new codingBlock.BCFK_ContextMenuStrip();
             this._menuStripPnl.SuspendLayout();
             this._fileCms.SuspendLayout();
             this._editCms.SuspendLayout();
@@ -204,34 +204,33 @@ namespace codingBlock
             // _blocksPnl
             // 
             this._blocksPnl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
-            this._blocksPnl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this._blocksPnl.Dock = System.Windows.Forms.DockStyle.Left;
             this._blocksPnl.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._blocksPnl.ForeColor = System.Drawing.Color.White;
             this._blocksPnl.Location = new System.Drawing.Point(55, 76);
             this._blocksPnl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._blocksPnl.MinimumSize = new System.Drawing.Size(100, 2);
             this._blocksPnl.Name = "_blocksPnl";
             this._blocksPnl.Size = new System.Drawing.Size(200, 428);
             this._blocksPnl.TabIndex = 3;
+            this._blocksPnl.Resize += new System.EventHandler(this._blocksPnl_Resize);
             // 
-            // splitter1
+            // _splitter
             // 
-            this.splitter1.Location = new System.Drawing.Point(255, 76);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 428);
-            this.splitter1.TabIndex = 4;
-            this.splitter1.TabStop = false;
+            this._splitter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(13)))), ((int)(((byte)(13)))));
+            this._splitter.Location = new System.Drawing.Point(255, 76);
+            this._splitter.Name = "_splitter";
+            this._splitter.Size = new System.Drawing.Size(8, 428);
+            this._splitter.TabIndex = 4;
+            this._splitter.TabStop = false;
             // 
             // _codePnl
             // 
             this._codePnl.Dock = System.Windows.Forms.DockStyle.Fill;
             this._codePnl.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._codePnl.ForeColor = System.Drawing.Color.White;
-            this._codePnl.Location = new System.Drawing.Point(258, 76);
-            this._codePnl.MinimumSize = new System.Drawing.Size(100, 0);
+            this._codePnl.Location = new System.Drawing.Point(263, 76);
             this._codePnl.Name = "_codePnl";
-            this._codePnl.Size = new System.Drawing.Size(702, 428);
+            this._codePnl.Size = new System.Drawing.Size(697, 428);
             this._codePnl.TabIndex = 5;
             // 
             // _header
@@ -279,7 +278,7 @@ namespace codingBlock
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.ClientSize = new System.Drawing.Size(960, 504);
             this.Controls.Add(this._codePnl);
-            this.Controls.Add(this.splitter1);
+            this.Controls.Add(this._splitter);
             this.Controls.Add(this._blocksPnl);
             this.Controls.Add(this._blockTypePnl);
             this.Controls.Add(this._menuStripPnl);
@@ -317,7 +316,7 @@ namespace codingBlock
         private ToolStripMenuItem _deleteCmsi;
         private BCFK_ContextMenuStrip _fileCms;
         private BCFK_ContextMenuStrip _editCms;
-        private Splitter splitter1;
+        private Splitter _splitter;
         private Panel _codePnl;
     }
 }
