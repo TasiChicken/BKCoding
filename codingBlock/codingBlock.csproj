@@ -103,7 +103,10 @@
     <Compile Include="Edit\Block\CodeBlock.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Edit\Block\CodeBlockContainer.cs">
+    <Compile Include="Edit\Block\ContainerBlock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Edit\Block\DataBlock.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Edit\Block\InputBox.cs">
@@ -232,6 +235,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <None Include="Resources\trashCan.png" />
     <None Include="Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup />

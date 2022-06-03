@@ -46,12 +46,15 @@ namespace codingBlock
             this._blocksPnl = new System.Windows.Forms.Panel();
             this._splitter = new System.Windows.Forms.Splitter();
             this._codePnl = new System.Windows.Forms.Panel();
-            this._header = new codingBlock.Header();
-            this._fileCms = new codingBlock.BCFK_ContextMenuStrip();
-            this._editCms = new codingBlock.BCFK_ContextMenuStrip();
+            this._trashCan = new System.Windows.Forms.PictureBox();
+            this._header = new Header();
+            this._fileCms = new BCFK_ContextMenuStrip();
+            this._editCms = new BCFK_ContextMenuStrip();
             this._menuStripPnl.SuspendLayout();
+            this._blocksPnl.SuspendLayout();
             this._fileCms.SuspendLayout();
             this._editCms.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._trashCan)).BeginInit();
             this.SuspendLayout();
             // 
             // _blockTypePnl
@@ -204,6 +207,7 @@ namespace codingBlock
             // _blocksPnl
             // 
             this._blocksPnl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this._blocksPnl.Controls.Add(this._trashCan);
             this._blocksPnl.Dock = System.Windows.Forms.DockStyle.Left;
             this._blocksPnl.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._blocksPnl.ForeColor = System.Drawing.Color.White;
@@ -213,6 +217,19 @@ namespace codingBlock
             this._blocksPnl.Size = new System.Drawing.Size(200, 428);
             this._blocksPnl.TabIndex = 3;
             this._blocksPnl.Resize += new System.EventHandler(this._blocksPnl_Resize);
+            // 
+            // _trashCan
+            // 
+            this._trashCan.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this._trashCan.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._trashCan.Image = global::codingBlock.Properties.Resources.trashCan;
+            this._trashCan.Location = new System.Drawing.Point(0, 0);
+            this._trashCan.Name = "_trashCan";
+            this._trashCan.Size = new System.Drawing.Size(200, 428);
+            this._trashCan.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this._trashCan.TabIndex = 0;
+            this._trashCan.TabStop = false;
+            this._trashCan.Visible = false;
             // 
             // _splitter
             // 
@@ -291,6 +308,8 @@ namespace codingBlock
             this.Text = "BKCoding";
             this.Load += new System.EventHandler(this.EditForm_Load);
             this._menuStripPnl.ResumeLayout(false);
+            this._blocksPnl.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this._trashCan)).EndInit();
             this._fileCms.ResumeLayout(false);
             this._editCms.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -318,5 +337,6 @@ namespace codingBlock
         private BCFK_ContextMenuStrip _editCms;
         private Splitter _splitter;
         private Panel _codePnl;
+        private PictureBox _trashCan;
     }
 }

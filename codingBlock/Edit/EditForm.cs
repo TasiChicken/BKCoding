@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -53,7 +54,6 @@ namespace codingBlock
         {
             FormResizer.AddResizer(this);
             
-            _blocksPnl.MouseWheel += EventHandlers.Scrollable_MouseWheel;
             _blockTypePnl.MouseWheel += EventHandlers.Scrollable_MouseWheel;
 
             _header.SetExitBtnAction(new Header.ExitAction(closeThisForm));
@@ -61,9 +61,9 @@ namespace codingBlock
 
             hasSaved = _projectData != null;
 
-            //To do read file
-
             addBlockTypeBtn();
+
+            //To do read file
         }
 
         private void _blocksPnl_Resize(object sender, EventArgs e)
@@ -273,6 +273,7 @@ namespace codingBlock
         internal void ChangeBlockType(int index)
         {
             _blocksPnl.Controls.Clear();
+            _blocksPnl.Controls.Add(_trashCan);
 
             for (int i = 0; i < blockTypes.Length; i++)
             {
@@ -285,12 +286,45 @@ namespace codingBlock
             _splitter.BackColor = Colors.Black26;
             _splitter.Width = 10;
 
-            CodeBlock c = new CodeBlock(blockTypes[index].color, "int # = #;");
+            CodeBlock c = new CodeBlock(blockTypes[index].color, "int # = #", false);
             _blocksPnl.Controls.Add(c);
             c.Location = new Point(5, 5);
-            c = new CodeBlock(blockTypes[index].color, "int # = #;", false);
+            c = new CodeBlock(blockTypes[index].color, "# = #", false);
             _blocksPnl.Controls.Add(c);
-            c.Location = new Point(5, 50);
+            c.Location = new Point(5, 55);
+            c = new DataBlock(blockTypes[1].color, "# + #", false);
+            _blocksPnl.Controls.Add(c);
+            c.Location = new Point(5, 105);
+        }
+
+        internal bool InCodeRegion(CodeBlock codeBlock)
+        {
+            return Vector2Helper.Compare(Vector2Helper.PositionInTopLevel(codeBlock), _codePnl.Location) == CompareResult.More;
+        }
+
+        internal void VisionTrashCan(bool visible)
+        {
+            _trashCan.Visible = visible;
+            if (visible) _trashCan.BringToFront();
+        }
+
+        internal void IntoCodePnl(CodeBlock codeBlock)
+        {
+            _codePnl.Controls.Add(codeBlock);
+            codeBlock.Location = Vector2Helper.Sub(codeBlock.Location, _codePnl.Location);
+        }
+
+        internal CodeBlock NearestBlock(Point point)
+        {
+            point = Vector2Helper.Sub(point, _codePnl.Location);
+
+            foreach(CodeBlock codeBlock in _codePnl.Controls)
+            {
+                if (Vector2Helper.Compare(codeBlock.Location, point) != CompareResult.Less) continue;
+                if (Vector2Helper.Compare(codeBlock.BottomRight(), point) != CompareResult.More) continue;
+                return codeBlock;
+            }
+            return null;
         }
 
         #endregion
