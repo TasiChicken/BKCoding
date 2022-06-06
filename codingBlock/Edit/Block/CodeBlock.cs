@@ -9,8 +9,8 @@ namespace codingBlock
     {
         #region Const
 
-        private const int padding = 5;
-        private const int height = 36;
+        protected const int padding = 5;
+        protected const int height = 36;
 
         #endregion
 
@@ -36,15 +36,11 @@ namespace codingBlock
             string[] codes = code.Split('#');
 
             codeLbls = new Label[codes.Length];
-
-            this.Height = height;
             
             for (int i = 0; i < codeLbls.Length; i++)
             {
                 codeLbls[i] = new Label();
                 codeLbls[i].MouseDown += CodeBlock_MouseDown;
-                codeLbls[i].MouseEnter += CodeBlock_MouseEnter;
-                codeLbls[i].MouseLeave += CodeBlock_MouseLeave;
                 codeLbls[i].Text = codes[i];
                 codeLbls[i].AutoSize = true;
                 codeLbls[i].Parent = this;
@@ -124,16 +120,6 @@ namespace codingBlock
             this.BringToFront();
         }
 
-        private void CodeBlock_MouseEnter(object sender, EventArgs e)
-        {
-            this.BorderStyle = BorderStyle.FixedSingle;
-        }
-
-        private void CodeBlock_MouseLeave(object sender, EventArgs e)
-        {
-            this.BorderStyle = BorderStyle.None;
-        }
-
         #endregion
 
         #region Function
@@ -152,11 +138,11 @@ namespace codingBlock
             this.enable = enable;
             this.code = code;
             this.BackColor = color;
+            this.Height = height;
+
             this.Load += CodeBlock_Load;
             this.MouseDown += CodeBlock_MouseDown;
-            this.MouseEnter += CodeBlock_MouseEnter;
-            this.MouseLeave += CodeBlock_MouseLeave;
-
+            
             if (!enable) return;
 
             this.MouseUp += CodeBlock_MouseUp;

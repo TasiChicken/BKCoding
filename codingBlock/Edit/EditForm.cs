@@ -45,6 +45,7 @@ namespace codingBlock
                 if (_projectData != null) _header.SetTitle(_projectData.fileNameNoExtension + (value ? "" : "(未儲存)"));
             }
         }
+        private List<CodeBlock> codeBlocks = new List<CodeBlock>();
 
         #endregion
 
@@ -286,20 +287,14 @@ namespace codingBlock
             _splitter.BackColor = Colors.Black26;
             _splitter.Width = 10;
 
-            CodeBlock c = new CodeBlock(blockTypes[index].color, "int # = #", false);
+            CodeBlock c = new ContainerBlock(blockTypes[index].color, "for (int # = #; #; #)", false);
             _blocksPnl.Controls.Add(c);
-            c.Location = new Point(5, 5);
-            c = new CodeBlock(blockTypes[index].color, "# = #", false);
-            _blocksPnl.Controls.Add(c);
-            c.Location = new Point(5, 55);
-            c = new DataBlock(blockTypes[1].color, "# + #", false);
-            _blocksPnl.Controls.Add(c);
-            c.Location = new Point(5, 105);
+            c.Location = new Point(5, 50);
         }
 
         internal bool InCodeRegion(CodeBlock codeBlock)
         {
-            return Vector2Helper.Compare(Vector2Helper.PositionInTopLevel(codeBlock), _codePnl.Location) == CompareResult.More;
+            return Vector2Helper.Compare(Vector2Helper.PositionInTopLevel(codeBlock), new Point(_splitter.Right, _splitter.Top)) == CompareResult.More;
         }
 
         internal void VisionTrashCan(bool visible)
@@ -310,15 +305,18 @@ namespace codingBlock
 
         internal void IntoCodePnl(CodeBlock codeBlock)
         {
+            /*
             _codePnl.Controls.Add(codeBlock);
             codeBlock.Location = Vector2Helper.Sub(codeBlock.Location, _codePnl.Location);
+            */
+            codeBlocks.Add(codeBlock);
         }
 
         internal CodeBlock NearestBlock(Point point)
         {
-            point = Vector2Helper.Sub(point, _codePnl.Location);
+            //point = Vector2Helper.Sub(point, _codePnl.Location);
 
-            foreach(CodeBlock codeBlock in _codePnl.Controls)
+            foreach(CodeBlock codeBlock in codeBlocks)
             {
                 if (Vector2Helper.Compare(codeBlock.Location, point) != CompareResult.Less) continue;
                 if (Vector2Helper.Compare(codeBlock.BottomRight(), point) != CompareResult.More) continue;
