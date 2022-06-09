@@ -48,7 +48,7 @@ namespace codingBlock
             if (dataBlock == null)
             {
                 _textBox_TextChanged(null, null);
-                this.Top = (this.Parent.Height - this.Height) / 2;
+                this.Top = (CodeBlock.height - this.Height) / 2;
                 return;
             }
 

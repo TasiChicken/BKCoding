@@ -8,55 +8,11 @@ namespace codingBlock
     {
         #region Field
 
-        private bool onInputBox = false;
         private InputBox inputBox = null;
 
         #endregion
 
         #region Event
-
-        protected override void CodeBlock_MouseDown(object sender, MouseEventArgs e)
-        {
-            base.CodeBlock_MouseDown(sender, e);
-
-            if (inputBox == null) return;
-
-            inputBox.dataBlock = null;
-            inputBox = null;
-        }
-
-        protected override void CodeBlock_MouseMove(object sender, MouseEventArgs e)
-        {
-            base.CodeBlock_MouseMove(sender, e);
-
-            if (!isDragging) return;
-
-            InputBox inputBox = nearbyInputBox();
-            onInputBox = inputBox != null;
-            
-            if(onInputBox)
-            {
-                this.inputBox = inputBox;
-                inputBox.PreviewBlock(this);
-                return;
-            }
-
-
-            if (this.inputBox == null) return;
-            
-            this.inputBox.PreviewBlock(null);
-            this.inputBox = null;
-
-        }
-
-        protected override void CodeBlock_MouseUp(object sender, MouseEventArgs e)
-        {
-            base.CodeBlock_MouseUp(sender, e);
-
-            if (inputBox == null) return;
-
-            inputBox.dataBlock = this;
-        }
 
         private void DataBlock_Resize(object sender, EventArgs e)
         {
@@ -68,24 +24,49 @@ namespace codingBlock
 
         #region Function
 
-        private InputBox nearbyInputBox()
+        protected override void leftConatiner()
         {
-            CodeBlock codeBlock = editForm.NearestBlock(this.Location);
-            if (codeBlock == null) return null;
+            if (inputBox == null) return;
 
-            return codeBlock.NearbyInputBox(this.Left - codeBlock.Left - codeBlock.Parent.Left);
+            inputBox.dataBlock = null;
+            inputBox = null;
         }
 
-        protected override CodeBlock clone(Color color, string code)
+        protected override void detectConatiner()
         {
-            return new DataBlock(color, code);
+            CodeBlock codeBlock = editForm.OnWhichBlock(this.Location);
+
+            InputBox inputBox = codeBlock == null ? null : codeBlock.OnWhichInputBox(this.Location);
+            
+            if (this.inputBox != inputBox && this.inputBox != null)
+            {
+                this.inputBox.PreviewBlock(null);
+                this.inputBox = null;
+            }
+
+            if (inputBox == null) return;
+            
+            this.inputBox = inputBox;
+            inputBox.PreviewBlock(this);
+        }
+
+        protected override void enterConatiner()
+        {
+            if (inputBox == null) return;
+
+            inputBox.dataBlock = this;
+        }
+
+        protected override CodeBlock clone(Color color, string code, DragType dragType)
+        {
+            return new DataBlock(color, code, dragType);
         }
 
         #endregion
 
         #region Internal
 
-        internal DataBlock(Color color, string code, bool enable = true) : base(color, code, enable)
+        internal DataBlock(Color color, string code, DragType dragType = DragType.normal) : base(color, code, dragType)
         {
             this.Resize += DataBlock_Resize;
         }

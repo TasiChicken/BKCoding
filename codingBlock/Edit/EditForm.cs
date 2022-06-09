@@ -11,6 +11,7 @@ namespace codingBlock
         
         private const int _playBtnPadding = 5;
         private const int mainPnlMinWidth = 150;
+        private static readonly Type codeBlockType = typeof(CodeBlock);
 
         #endregion
 
@@ -28,8 +29,9 @@ namespace codingBlock
 
         #endregion
 
-        #region Fields
+        #region Field
 
+        private readonly ContainerBlock mainBlock = new ContainerBlock(Color.FromArgb(128, 29, 100), "int main()", CodeBlock.DragType.unmovable);
         private ProjectData _projectData;
         private SelectProjectForm selectProjectForm;
         private bool _hasSaved;
@@ -64,7 +66,16 @@ namespace codingBlock
 
             addBlockTypeBtn();
 
+            this.Controls.Add(mainBlock);
+            mainBlock.BringToFront();
+
             //To do read file
+        }
+
+        private void EditForm_ControlAdded(object sender, ControlEventArgs e)
+        {
+            Type type = e.Control.GetType();
+            if (type.Equals(codeBlockType) || type.IsSubclassOf(codeBlockType)) codeBlocks.Add(e.Control as CodeBlock);
         }
 
         private void _blocksPnl_Resize(object sender, EventArgs e)
@@ -72,6 +83,8 @@ namespace codingBlock
             int maxWidth = this.Width - _blocksPnl.Left - mainPnlMinWidth;
             if (_blocksPnl.Width > maxWidth) _blocksPnl.Width = maxWidth;
             else if (_blocksPnl.Width < mainPnlMinWidth) _blocksPnl.Width = mainPnlMinWidth;
+
+            mainBlock.Location = new Point(_splitter.Right, _splitter.Top);
         }
 
         #region Menu Strip
@@ -259,7 +272,7 @@ namespace codingBlock
             public string name;
             public Color color;
         }
-        
+
         #endregion
 
         #region Internal
@@ -268,9 +281,12 @@ namespace codingBlock
         {
             _projectData = projectData;
             this.selectProjectForm = selectProjectForm;
+            
             InitializeComponent();
+
+            this.ControlAdded += EditForm_ControlAdded;
         }
-        
+
         internal void ChangeBlockType(int index)
         {
             _blocksPnl.Controls.Clear();
@@ -287,9 +303,7 @@ namespace codingBlock
             _splitter.BackColor = Colors.Black26;
             _splitter.Width = 10;
 
-            CodeBlock c = new ContainerBlock(blockTypes[index].color, "for (int # = #; #; #)", false);
-            _blocksPnl.Controls.Add(c);
-            c.Location = new Point(5, 50);
+            test(index);
         }
 
         internal bool InCodeRegion(CodeBlock codeBlock)
@@ -303,28 +317,68 @@ namespace codingBlock
             if (visible) _trashCan.BringToFront();
         }
 
-        internal void IntoCodePnl(CodeBlock codeBlock)
+        internal void ThrowAwayBlock(CodeBlock codeBlock)
         {
-            /*
-            _codePnl.Controls.Add(codeBlock);
-            codeBlock.Location = Vector2Helper.Sub(codeBlock.Location, _codePnl.Location);
-            */
-            codeBlocks.Add(codeBlock);
+            this.codeBlocks.Remove(codeBlock);
+            codeBlock.Parent = null;
+            codeBlock.Dispose();
         }
 
-        internal CodeBlock NearestBlock(Point point)
+        internal CodeBlock OnWhichBlock(Point point)
         {
-            //point = Vector2Helper.Sub(point, _codePnl.Location);
-
             foreach(CodeBlock codeBlock in codeBlocks)
             {
                 if (Vector2Helper.Compare(codeBlock.Location, point) != CompareResult.Less) continue;
-                if (Vector2Helper.Compare(codeBlock.BottomRight(), point) != CompareResult.More) continue;
+                if (Vector2Helper.Compare(codeBlock.Location + codeBlock.Size, point) != CompareResult.More) continue;
                 return codeBlock;
             }
             return null;
         }
 
         #endregion
+    
+        private void test(int index)
+        {
+            CodeBlock codeBlock;
+            switch (index)
+            {
+                case 0:
+                    codeBlock = new CodeBlock(blockTypes[index].color, "printf (#)", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 5);
+                    codeBlock = new CodeBlock(blockTypes[index].color, "sacnf (#)", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 55);
+                    break;
+                case 1:
+                    codeBlock = new DataBlock(blockTypes[index].color, "# + #", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 5);
+                    codeBlock = new DataBlock(blockTypes[index].color, "# - #", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 55);
+                    codeBlock = new DataBlock(blockTypes[index].color, "# * #", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 105);
+                    codeBlock = new DataBlock(blockTypes[index].color, "# / #", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 155);
+                    break;
+                case 2:
+                    codeBlock = new ContainerBlock(blockTypes[index].color, "if (#)", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 5);
+                    codeBlock = new ContainerBlock(blockTypes[index].color, "else if (#)", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 205);
+                    codeBlock = new ContainerBlock(blockTypes[index].color, "else", CodeBlock.DragType.clone);
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 405);
+                    break;
+            }
+
+            
+            
+        }
     }
 }

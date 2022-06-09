@@ -10,20 +10,21 @@ namespace codingBlock
         #region Const
 
         protected const int padding = 5;
-        protected const int height = 36;
+        private static readonly Type containerType = typeof(ContainerBlock);
 
         #endregion
 
         #region Field
 
+        private DragType dragType;
         private string code;
         private Label[] codeLbls;
         private InputBox[] inputBoxes;
-        private bool enable;
         private Point clickPoint;
+        private bool isDragging = false;
         private bool _onTrashCan = true;
+        private ContainerBlock parentBlock;
         protected EditForm editForm;
-        protected bool isDragging = false;
 
         #endregion
 
@@ -36,7 +37,8 @@ namespace codingBlock
             string[] codes = code.Split('#');
 
             codeLbls = new Label[codes.Length];
-            
+            bool unmoveable = dragType != DragType.normal;
+
             for (int i = 0; i < codeLbls.Length; i++)
             {
                 codeLbls[i] = new Label();
@@ -46,7 +48,7 @@ namespace codingBlock
                 codeLbls[i].Parent = this;
                 codeLbls[i].Top = (height - codeLbls[i].Height) / 2;
 
-                if (!enable) continue;
+                if (unmoveable) continue;
 
                 codeLbls[i].MouseUp += CodeBlock_MouseUp;
                 codeLbls[i].MouseMove += CodeBlock_MouseMove;
@@ -54,42 +56,48 @@ namespace codingBlock
 
             codeLbls[0].Left = padding;
             
-            inputBoxes = new InputBox[codes.Length - 1];
-
-            if (inputBoxes.Length == 0) return;
-
-            for(int i = 0; i < inputBoxes.Length; i++)
+            if (codeLbls.Length == 1)
             {
-                inputBoxes[i] = new InputBox(this, enable);
+                this.Width = codeLbls[0].Right + padding;
+                return;
+            }
+
+            inputBoxes = new InputBox[codes.Length - 1];
+            bool inputable = dragType != DragType.clone;
+
+            for (int i = 0; i < inputBoxes.Length; i++)
+            {
+                inputBoxes[i] = new InputBox(this, inputable);
                 inputBoxes[i].Top = (height - inputBoxes[i].Height) / 2;
             }
 
             LocateCodeControls(inputBoxes[0]);
         }
 
-        protected virtual void CodeBlock_MouseDown(object sender, MouseEventArgs e)
+        private void CodeBlock_MouseDown(object sender, MouseEventArgs e)
         {
-            if (enable)
+            if (dragType == DragType.clone)
             {
-                clickPoint = e.Location;
-                isDragging = true;
-                this.Parent = editForm;
-                this.BringToFront();
+                CodeBlock codeBlock = clone(this.BackColor, this.code, DragType.normal);
+                codeBlock.Font = this.Font;
+                codeBlock.ForeColor = this.ForeColor;
+                codeBlock.Parent = editForm;
+                codeBlock.Location = Vector2Helper.PositionInTopLevel(this);
+                this.Capture = false;
+                codeBlock.Capture = true;
+                codeBlock.CodeBlock_MouseDown(codeBlock, e);
+                codeBlock.BringToFront();
                 return;
             }
 
-            CodeBlock codeBlock = clone(this.BackColor, this.code);
-            codeBlock.Font = this.Font;
-            codeBlock.ForeColor = this.ForeColor;
-            codeBlock.Parent = editForm;
-            codeBlock.Location = Vector2Helper.PositionInTopLevel(this);
-            this.Capture = false;
-            codeBlock.Capture = true;
-            codeBlock.CodeBlock_MouseDown(codeBlock, e);
-            codeBlock.BringToFront();
+            leftConatiner();
+            clickPoint = e.Location;
+            isDragging = true;
+            this.Parent = editForm;
+            this.BringToFront();
         }
 
-        protected virtual void CodeBlock_MouseMove(object sender, MouseEventArgs e)
+        private void CodeBlock_MouseMove(object sender, MouseEventArgs e)
         {
             if (!isDragging) return;
             Point point = this.Location;
@@ -103,20 +111,22 @@ namespace codingBlock
                 editForm.VisionTrashCan(onTrashCan);
                 _onTrashCan = onTrashCan;
             }
+
+            detectConatiner();
         }
 
-        protected virtual void CodeBlock_MouseUp(object sender, MouseEventArgs e)
+        private void CodeBlock_MouseUp(object sender, MouseEventArgs e)
         {
             isDragging = false;
 
             if (_onTrashCan)
             {
+                editForm.ThrowAwayBlock(this);
                 editForm.VisionTrashCan(false);
-                this.Dispose();
                 return;
             }
 
-            editForm.IntoCodePnl(this);
+            enterConatiner();
             this.BringToFront();
         }
 
@@ -124,26 +134,67 @@ namespace codingBlock
 
         #region Function
 
-        protected virtual CodeBlock clone(Color color, string code)
+        protected virtual CodeBlock clone(Color color, string code, DragType dragType)
         {
-            return new CodeBlock(color, code);
+            return new CodeBlock(color, code, dragType);
+        }
+
+        protected virtual void leftConatiner()
+        {
+            if (parentBlock == null) return;
+
+            parentBlock.RemoveChlid(this);
+            parentBlock = null;
+        }
+
+        protected virtual void detectConatiner()
+        {
+            CodeBlock codeBlock = editForm.OnWhichBlock(this.Location);
+
+            if(codeBlock == null)
+            {
+                parentBlock = null;
+                return;
+            }
+
+            if (!codeBlock.GetType().Equals(containerType)) return;
+            
+            parentBlock = codeBlock as ContainerBlock;
+            parentBlock.PreviewChild(this);
+        }
+
+        protected virtual void enterConatiner()
+        {
+            if (parentBlock == null) return;
+
+            parentBlock.InsertChlid(this);
         }
 
         #endregion
 
         #region Internal
 
-        internal CodeBlock(Color color, string code, bool enable = true)
+        internal const int height = 36;
+
+        protected internal enum DragType
         {
-            this.enable = enable;
+            normal, unmovable, clone
+        }
+
+        internal CodeBlock(Color color, string code, DragType dragType = DragType.normal)
+        {
+            this.dragType = dragType;
             this.code = code;
             this.BackColor = color;
             this.Height = height;
 
             this.Load += CodeBlock_Load;
+
+            if (dragType == DragType.unmovable) return;
+
             this.MouseDown += CodeBlock_MouseDown;
             
-            if (!enable) return;
+            if (dragType == DragType.clone) return;
 
             this.MouseUp += CodeBlock_MouseUp;
             this.MouseMove += CodeBlock_MouseMove;
@@ -170,23 +221,18 @@ namespace codingBlock
             this.Width = codeLbls[codeLbls.Length - 1].Right + padding;
         }
 
-        internal Point BottomRight()
+        internal virtual InputBox OnWhichInputBox(Point point)
         {
-            return Vector2Helper.Add(this.Location, new Point(this.Width, height));
-        }
+            if (dragType == DragType.clone) return null;
 
-        internal InputBox NearbyInputBox(int x)
-        {
-            Debug.WriteLine("again");
-            Debug.WriteLine(x);
+            int x = point.X - this.Left;
 
-            for(int i = 0; i < inputBoxes.Length; i++)
+            foreach(InputBox inputBox in inputBoxes)
             {
-                Debug.WriteLine(inputBoxes[i].Left);
-                if (inputBoxes[i].Left > x) return null;
-                if (inputBoxes[i].Right < x) continue;
-                if (inputBoxes[i].dataBlock != null) return inputBoxes[i].dataBlock.NearbyInputBox(x - inputBoxes[i].Left);
-                return inputBoxes[i];
+                if (inputBox.Left > x) return null;
+                if (inputBox.Right < x) continue;
+                if (inputBox.dataBlock == null) return inputBox;
+                return inputBox.dataBlock.OnWhichInputBox(Vector2Helper.Sub(point, Vector2Helper.PositionInTopLevel(inputBox)));
             }
 
             return null;
