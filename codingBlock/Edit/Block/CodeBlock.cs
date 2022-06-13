@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace codingBlock
 {
@@ -10,7 +10,7 @@ namespace codingBlock
         #region Const
 
         protected const int padding = 5;
-        private static readonly Type containerType = typeof(ContainerBlock);
+        protected static readonly Type containerType = typeof(ContainerBlock);
 
         #endregion
 
@@ -23,8 +23,20 @@ namespace codingBlock
         private Point clickPoint;
         private bool isDragging = false;
         private bool _onTrashCan = true;
-        private ContainerBlock parentBlock;
         protected EditForm editForm;
+        private ContainerBlock _parentBlock;
+        protected ContainerBlock parentBlock
+        {
+            get
+            {
+                return _parentBlock;
+            }
+            set
+            {
+                if (_parentBlock != value && _parentBlock != null) _parentBlock.RemoveChild(this);
+                _parentBlock = value;
+            }
+        }
 
         #endregion
 
@@ -55,7 +67,7 @@ namespace codingBlock
             }
 
             codeLbls[0].Left = padding;
-            
+
             if (codeLbls.Length == 1)
             {
                 this.Width = codeLbls[0].Right + padding;
@@ -141,33 +153,35 @@ namespace codingBlock
 
         protected virtual void leftConatiner()
         {
-            if (parentBlock == null) return;
-
-            parentBlock.RemoveChlid(this);
-            parentBlock = null;
         }
 
         protected virtual void detectConatiner()
         {
             CodeBlock codeBlock = editForm.OnWhichBlock(this.Location);
 
-            if(codeBlock == null)
+            if (codeBlock == null || !codeBlock.GetType().Equals(containerType))
             {
                 parentBlock = null;
                 return;
             }
 
-            if (!codeBlock.GetType().Equals(containerType)) return;
+            ContainerBlock containerBlock = (codeBlock as ContainerBlock).OnWhichConatinerBlock(this);
             
-            parentBlock = codeBlock as ContainerBlock;
-            parentBlock.PreviewChild(this);
+            if (parentBlock != containerBlock)
+            {
+                parentBlock = containerBlock;
+                detectConatiner();
+                return;
+            }
+
+            parentBlock.InsertChild(this, true);
         }
 
         protected virtual void enterConatiner()
         {
             if (parentBlock == null) return;
 
-            parentBlock.InsertChlid(this);
+            parentBlock.InsertChild(this);
         }
 
         #endregion
@@ -175,6 +189,8 @@ namespace codingBlock
         #region Internal
 
         internal const int height = 36;
+
+        internal int index;
 
         protected internal enum DragType
         {
@@ -193,7 +209,7 @@ namespace codingBlock
             if (dragType == DragType.unmovable) return;
 
             this.MouseDown += CodeBlock_MouseDown;
-            
+
             if (dragType == DragType.clone) return;
 
             this.MouseUp += CodeBlock_MouseUp;
@@ -208,12 +224,12 @@ namespace codingBlock
         internal void LocateCodeControls(InputBox inputBox)
         {
             bool isBehind = false;
-            for(int i= 0; i < inputBoxes.Length; i++)
+            for (int i = 0; i < inputBoxes.Length; i++)
             {
                 if (inputBox.Equals(inputBoxes[i])) isBehind = true;
 
                 else if (!isBehind) continue;
-                
+
                 inputBoxes[i].Left = codeLbls[i].Right;
                 codeLbls[i + 1].Left = inputBoxes[i].Right;
             }
@@ -225,17 +241,22 @@ namespace codingBlock
         {
             if (dragType == DragType.clone) return null;
 
-            int x = point.X - this.Left;
+            int x = point.X - Vector2Helper.PositionInTopLevel(this).X;
 
-            foreach(InputBox inputBox in inputBoxes)
+            foreach (InputBox inputBox in inputBoxes)
             {
                 if (inputBox.Left > x) return null;
                 if (inputBox.Right < x) continue;
                 if (inputBox.dataBlock == null) return inputBox;
-                return inputBox.dataBlock.OnWhichInputBox(Vector2Helper.Sub(point, Vector2Helper.PositionInTopLevel(inputBox)));
+                return inputBox.dataBlock.OnWhichInputBox(point);
             }
 
             return null;
+        }
+
+        internal new virtual void BringToFront()
+        {
+            base.BringToFront();
         }
 
         #endregion

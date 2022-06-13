@@ -28,6 +28,7 @@ namespace codingBlock
         {
             if (inputBox == null) return;
 
+            inputBox.PreviewBlock(null);
             inputBox.dataBlock = null;
             inputBox = null;
         }
@@ -37,17 +38,14 @@ namespace codingBlock
             CodeBlock codeBlock = editForm.OnWhichBlock(this.Location);
 
             InputBox inputBox = codeBlock == null ? null : codeBlock.OnWhichInputBox(this.Location);
-            
-            if (this.inputBox != inputBox && this.inputBox != null)
-            {
-                this.inputBox.PreviewBlock(null);
-                this.inputBox = null;
-            }
 
-            if (inputBox == null) return;
-            
+            if (inputBox == this.inputBox) return;
+
+            if (this.inputBox != null) this.inputBox.PreviewBlock(null);
+
             this.inputBox = inputBox;
-            inputBox.PreviewBlock(this);
+
+            if (inputBox != null) inputBox.PreviewBlock(this);
         }
 
         protected override void enterConatiner()
