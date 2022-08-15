@@ -21,7 +21,7 @@ namespace codingBlock
         private void SelectProjectForm_Load(object sender, EventArgs e)
         {
             string projectDataString = Properties.Settings.Default.projectDatas;
-            if (projectDataString != null) projectDataList = FileHelper.FromJson<List<ProjectData>>(FileHelper.DecryptString(projectDataString));
+            if (projectDataString != null) projectDataList = FileHelper.FromJson<List<ProjectData>>(projectDataString);
             projectDataList = projectDataList ?? new List<ProjectData>();
 
             if(selectedFile != null)
@@ -39,7 +39,7 @@ namespace codingBlock
 
         private void SelectProjectForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            string projectDataString = FileHelper.EncryptString(FileHelper.ToJson<List<ProjectData>>(projectDataList));
+            string projectDataString = FileHelper.ToJson<List<ProjectData>>(projectDataList);
             Properties.Settings.Default.projectDatas = projectDataString;
             Properties.Settings.Default.Save();
         }

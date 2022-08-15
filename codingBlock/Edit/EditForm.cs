@@ -11,12 +11,12 @@ namespace codingBlock
         
         private const int _playBtnPadding = 5;
         private const int mainPnlMinWidth = 150;
-        private static readonly Type codeBlockType = typeof(CodeBlock);
+        private const string mainCode = "int main()";
 
         #endregion
 
         #region Data
-        
+
         private static readonly BlockType[] blockTypes =
         {
             new BlockType("I/O", Color.FromArgb(135, 19, 23)),
@@ -31,7 +31,7 @@ namespace codingBlock
 
         #region Field
 
-        private readonly ContainerBlock mainBlock = new ContainerBlock(Color.FromArgb(128, 29, 100), "int main()", CodeBlock.DragType.unmovable);
+        private ContainerBlock mainBlock;
         private ProjectData _projectData;
         private SelectProjectForm selectProjectForm;
         private bool _hasSaved;
@@ -66,16 +66,37 @@ namespace codingBlock
 
             addBlockTypeBtn();
 
-            this.Controls.Add(mainBlock);
-            mainBlock.BringToFront();
+            if (hasSaved)
+            {
+                CodeBlock.SaveData[] saveDatas = FileHelper.FromJson<CodeBlock.SaveData[]>(FileHelper.ReadFile(_projectData.fileFullPath));
+                foreach(CodeBlock.SaveData saveData in saveDatas)
+                {
+                    CodeBlock codeBlock = saveData.ToCodeBlock();
 
-            //To do read file
+                    if (saveData.code.Equals(mainCode))
+                    {
+                        mainBlock = codeBlock as ContainerBlock;
+                    }
+
+                    this.Controls.Add(codeBlock);
+                    codeBlock.Location = saveData.location;
+                    codeBlock.BringToFront();
+                }
+            }
+            else
+            {
+                mainBlock = new ContainerBlock(Color.FromArgb(128, 29, 100), mainCode, CodeBlock.DragType.unmovable);
+                this.Controls.Add(mainBlock);
+                mainBlock.BringToFront();
+            }
+
+            mainBlock.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
         }
 
         private void EditForm_ControlAdded(object sender, ControlEventArgs e)
         {
             Type type = e.Control.GetType();
-            if (type.Equals(codeBlockType) || type.IsSubclassOf(codeBlockType)) codeBlocks.Add(e.Control as CodeBlock);
+            if (type.Equals(typeof(CodeBlock)) || type.IsSubclassOf(typeof(CodeBlock))) codeBlocks.Add(e.Control as CodeBlock);
         }
 
         private void _blocksPnl_Resize(object sender, EventArgs e)
@@ -84,7 +105,8 @@ namespace codingBlock
             if (_blocksPnl.Width > maxWidth) _blocksPnl.Width = maxWidth;
             else if (_blocksPnl.Width < mainPnlMinWidth) _blocksPnl.Width = mainPnlMinWidth;
 
-            mainBlock.Location = new Point(_splitter.Right, _splitter.Top);
+            if (mainBlock != null)
+                mainBlock.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
         }
 
         #region Menu Strip
@@ -99,7 +121,7 @@ namespace codingBlock
 
         private void _playBtn_Click(object sender, EventArgs e)
         {
-            MessageDialog.Show("編譯失敗");
+            MessageDialog.Show(mainBlock.GetCode());
         }
 
         #endregion
@@ -181,7 +203,14 @@ namespace codingBlock
             _projectData.lastEditTime = DateTime.Now;
             selectProjectForm.LocateProjectDataInList(_projectData);
 
-            FileHelper.WriteFile(_projectData.fileFullPath, "");
+            List<CodeBlock.SaveData> blocksSaveData = new List<CodeBlock.SaveData>();
+
+            foreach (CodeBlock codeBlock in codeBlocks)
+                if (!codeBlock.hasParent())
+                    blocksSaveData.Add(codeBlock.CreateSaveData());
+
+            string saveContent = FileHelper.ToJson<List<CodeBlock.SaveData>>(blocksSaveData);
+            FileHelper.WriteFile(_projectData.fileFullPath, saveContent);
 
             hasSaved = true;
         }
@@ -211,11 +240,7 @@ namespace codingBlock
             }
             
             _header.SetTitle(_projectData.fileNameNoExtension);
-
-            //To do write file
-            FileHelper.WriteFile(_projectData.fileFullPath, "");
-
-            hasSaved = true;
+            saveFile();
         }
 
         #endregion
@@ -277,8 +302,11 @@ namespace codingBlock
 
         #region Internal
 
+        internal static EditForm instance;
+
         internal EditForm(ProjectData projectData, SelectProjectForm selectProjectForm)
         {
+            instance = this;
             _projectData = projectData;
             this.selectProjectForm = selectProjectForm;
             

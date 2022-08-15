@@ -97,7 +97,27 @@ namespace codingBlock
             this._textBox.Enter += _textBox_Enter;
             this._textBox.Leave += _textBox_Leave;
         }
-        
+
+        internal InputBox(CodeBlock parent, SaveData saveData)
+        {
+            this.parentBlock = parent;
+
+            InitializeComponent();
+
+            this.Parent = parent;
+
+            this._textBox.TextChanged += _textBox_TextChanged;
+            this._textBox.Enter += _textBox_Enter;
+            this._textBox.Leave += _textBox_Leave;
+
+            _textBox.Text = saveData.text;
+
+            if (!saveData.dataBlockSaveData.HasValue) return;
+
+            MessageBox.Show(saveData.dataBlockSaveData.Value.code);
+            this.dataBlock = saveData.dataBlockSaveData.Value.ToCodeBlock() as DataBlock;
+        }
+
         internal void PreviewBlock(DataBlock dataBlock)
         {
             tranformWithDataBlock(dataBlock);
@@ -108,6 +128,29 @@ namespace codingBlock
         internal string GetCode()
         {
             return _dataBlock == null ? _textBox.Text : _dataBlock.GetCode();
+        }
+
+        internal SaveData CreateSaveData()
+        {
+            InputBox.SaveData data = new InputBox.SaveData(_textBox.Text);
+
+            if (this.dataBlock != null)
+                data.dataBlockSaveData = this.dataBlock.CreateSaveData();
+
+            return data;
+        }
+
+        [Serializable]
+        internal struct SaveData
+        {
+            public SaveData(string text)
+            {
+                this.text = text;
+                this.dataBlockSaveData = null;
+            }
+
+            public string text { get; set; }
+            public CodeBlock.SaveData? dataBlockSaveData { get; set; }
         }
 
         #endregion

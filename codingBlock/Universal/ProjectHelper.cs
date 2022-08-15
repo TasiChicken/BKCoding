@@ -172,7 +172,6 @@ namespace codingBlock
         public static string ReadFile(string fileFullPath)
         {
             string content;
-
             try
             {
                 content = File.ReadAllText(fileFullPath);
@@ -182,34 +181,14 @@ namespace codingBlock
                 content = null;
             }
 
+            //decryption
             return content;
-        }
-
-        public static string EncryptString(string content)
-        {
-            //encryption
-
-            return content;
-        }
-
-        public static TValue FromJson<TValue>(string jsonContent)
-        {
-            TValue value;
-
-            try
-            {
-                value = JsonSerializer.Deserialize<TValue>(jsonContent);
-            }
-            catch (Exception e)
-            {
-                value = default(TValue);
-            }
-            
-            return value;
         }
 
         public static void WriteFile(string fileFullPath, string content)
         {
+            //encryption
+
             try
             {
                 File.WriteAllText(fileFullPath, content);
@@ -219,18 +198,26 @@ namespace codingBlock
                 MessageDialog.Show(e.ToString(), "錯誤");
             }
         }
-
-        public static string DecryptString(string content)
+        
+        public static TValue FromJson<TValue>(string jsonContent)
         {
-            //encryption
+            //decryption
 
-            return content;
+            TValue value;
+            try
+            {
+                value = JsonSerializer.Deserialize<TValue>(jsonContent);
+            }
+            catch (Exception e)
+            {
+                value = default(TValue);
+            }
+            return value;
         }
 
         public static string ToJson<TValue>(TValue data)
         {
             string jsonContent;
-
             try
             {
                 jsonContent = JsonSerializer.Serialize<TValue>(data);
@@ -239,7 +226,8 @@ namespace codingBlock
             {
                 jsonContent = null;
             }
-            
+
+            //encryption
             return jsonContent;
         }
     }

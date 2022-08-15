@@ -30,6 +30,9 @@ namespace codingBlock
         /// </summary>
         private void InitializeComponent()
         {
+            this._header = new Header();
+            this._fileCms = new BCFK_ContextMenuStrip();
+            this._editCms = new BCFK_ContextMenuStrip();
             this._blockTypePnl = new System.Windows.Forms.Panel();
             this._menuStripPnl = new System.Windows.Forms.Panel();
             this._playBtn = new System.Windows.Forms.Button();
@@ -46,9 +49,6 @@ namespace codingBlock
             this._blocksPnl = new System.Windows.Forms.Panel();
             this._trashCan = new System.Windows.Forms.PictureBox();
             this._splitter = new System.Windows.Forms.Splitter();
-            this._header = new Header();
-            this._fileCms = new BCFK_ContextMenuStrip();
-            this._editCms = new BCFK_ContextMenuStrip();
             this._menuStripPnl.SuspendLayout();
             this._blocksPnl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._trashCan)).BeginInit();
@@ -77,7 +77,7 @@ namespace codingBlock
             this._menuStripPnl.Location = new System.Drawing.Point(0, 39);
             this._menuStripPnl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._menuStripPnl.Name = "_menuStripPnl";
-            this._menuStripPnl.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._menuStripPnl.Padding = new System.Windows.Forms.Padding(4);
             this._menuStripPnl.Size = new System.Drawing.Size(960, 37);
             this._menuStripPnl.TabIndex = 1;
             // 
@@ -92,7 +92,7 @@ namespace codingBlock
             this._playBtn.Font = new System.Drawing.Font("Microsoft JhengHei UI", 12F);
             this._playBtn.ForeColor = System.Drawing.SystemColors.ScrollBar;
             this._playBtn.Location = new System.Drawing.Point(887, 4);
-            this._playBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._playBtn.Margin = new System.Windows.Forms.Padding(4);
             this._playBtn.Name = "_playBtn";
             this._playBtn.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this._playBtn.Size = new System.Drawing.Size(69, 29);
@@ -113,7 +113,7 @@ namespace codingBlock
             this._editMenuBtn.Font = new System.Drawing.Font("Microsoft JhengHei UI", 12F);
             this._editMenuBtn.ForeColor = System.Drawing.SystemColors.ScrollBar;
             this._editMenuBtn.Location = new System.Drawing.Point(54, 4);
-            this._editMenuBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._editMenuBtn.Margin = new System.Windows.Forms.Padding(4);
             this._editMenuBtn.Name = "_editMenuBtn";
             this._editMenuBtn.Size = new System.Drawing.Size(50, 29);
             this._editMenuBtn.TabIndex = 3;
@@ -131,7 +131,7 @@ namespace codingBlock
             this._fileMenuBtn.Font = new System.Drawing.Font("Microsoft JhengHei UI", 12F);
             this._fileMenuBtn.ForeColor = System.Drawing.SystemColors.ScrollBar;
             this._fileMenuBtn.Location = new System.Drawing.Point(4, 4);
-            this._fileMenuBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._fileMenuBtn.Margin = new System.Windows.Forms.Padding(4);
             this._fileMenuBtn.Name = "_fileMenuBtn";
             this._fileMenuBtn.Size = new System.Drawing.Size(50, 29);
             this._fileMenuBtn.TabIndex = 2;
@@ -247,7 +247,7 @@ namespace codingBlock
             this._header.Location = new System.Drawing.Point(0, 0);
             this._header.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._header.Name = "_header";
-            this._header.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this._header.Padding = new System.Windows.Forms.Padding(3);
             this._header.Size = new System.Drawing.Size(960, 39);
             this._header.TabIndex = 0;
             // 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace codingBlock
 {
@@ -26,7 +25,7 @@ namespace codingBlock
         {
             if (children.Count == 0) return;
 
-            LocateChlidren(children.First.Value, true);
+            locateChlidren(children.First.Value, true);
         }
 
         private void ContainerBlock_Paint(object sender, PaintEventArgs e)
@@ -52,7 +51,7 @@ namespace codingBlock
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) foreach (CodeBlock block in children) editForm.ThrowAwayBlock(block);
+            if (disposing) foreach (CodeBlock block in children) EditForm.instance.ThrowAwayBlock(block);
             base.Dispose(disposing);
         }
 
@@ -80,6 +79,18 @@ namespace codingBlock
             return null;
         }
 
+        private void locateChlidren(CodeBlock codeBlock, bool changeLeft = false)
+        {
+            LinkedListNode<CodeBlock> node = children.Find(codeBlock);
+
+            while (node != null)
+            {
+                node.Value.Top = node == children.First ? this.Top + height * 2 : node.Previous.Value.Bottom;
+                if (changeLeft) node.Value.Left = this.Left + blank;
+                node = node.Next;
+            }
+        }
+
         #endregion
 
         #region Internal
@@ -91,9 +102,38 @@ namespace codingBlock
             this.Paint += ContainerBlock_Paint;
         }
 
+        internal ContainerBlock(SaveData saveData, ContainerBlock parentBlock) : base(saveData, parentBlock)
+        {
+            this.Height = CodeBlock.height * 3;
+            this.LocationChanged += ContainerBlock_LocationChanged;
+            this.Paint += ContainerBlock_Paint;
+
+            if (saveData.childrenSaveData != null)
+                foreach (SaveData childrenData in saveData.childrenSaveData)
+                {
+                    CodeBlock codeBlock = childrenData.ToCodeBlock(this);
+                    EditForm.instance.Controls.Add(codeBlock);
+                    this.InsertChild(codeBlock);
+                }
+        }
+
         internal override string GetCode()
         {
             return base.GetCode();
+        }
+
+        internal override SaveData CreateSaveData()
+        {
+            SaveData saveData = base.CreateSaveData();
+            saveData.childrenSaveData = new SaveData[children.Count];
+
+            int i = 0;
+            foreach(CodeBlock codeBlock in children)
+            {
+                saveData.childrenSaveData[i] = codeBlock.CreateSaveData();
+            }
+
+            return saveData;
         }
 
         internal void InsertChild(CodeBlock codeBlock, bool preview = false)
@@ -105,7 +145,7 @@ namespace codingBlock
                 if (!preview)
                 {
                     codeBlock.Left = this.Left + blank;
-                    LocateChlidren(codeBlock);
+                    Transform(codeBlock);
                     return;
                 }
 
@@ -115,7 +155,7 @@ namespace codingBlock
                 else
                 {
                     maxTop = node.Next.Value.Top;
-                    if (node.Next.Value.GetType().Equals(containerType)) maxTop += height;
+                    if (node.Next.Value.GetType().Equals(typeof(ContainerBlock))) maxTop += height;
                 }
                 if (codeBlock.Top >= minTop && codeBlock.Top <= maxTop) return;
                 RemoveChild(codeBlock);
@@ -132,10 +172,10 @@ namespace codingBlock
                 node = node.Next;
             }
             if (node == null) children.AddLast(codeBlock);
-            
+
             if (!preview) codeBlock.Left = this.Left + blank;
             
-            LocateChlidren(codeBlock);
+            Transform(codeBlock);
         }
 
         internal void RemoveChild(CodeBlock codeBlock)
@@ -147,13 +187,13 @@ namespace codingBlock
             if (node == children.Last)
             {
                 children.Remove(node);
-                LocateChlidren(this);
+                Transform(this);
                 return;
             }
 
             node = node.Next;
             children.Remove(codeBlock);
-            LocateChlidren(node.Value);
+            Transform(node.Value);
         }
 
         internal override InputBox OnWhichInputBox(Point point)
@@ -170,29 +210,21 @@ namespace codingBlock
             foreach (CodeBlock child in children) child.BringToFront();
         }
     
-        internal void LocateChlidren(CodeBlock codeBlock, bool changeLeft = false)
+        internal void Transform(CodeBlock codeBlock, bool changeLeft = false)
         {
-            LinkedListNode<CodeBlock> node = children.Find(codeBlock);
-
-            while (node != null)
-            {
-                node.Value.Top = node == children.First ? this.Top + height * 2 : node.Previous.Value.Bottom;
-                if (changeLeft) node.Value.Left = this.Left + blank;
-                node = node.Next;
-            }
+            locateChlidren(codeBlock, changeLeft);
 
             this.Height = children.Count == 0 ? height * 3 : children.Last.Value.Bottom - this.Top + height;
             this.Refresh();
 
-            if (this.parentBlock != null) parentBlock.LocateChlidren(this);
+            if (this.parentBlock != null) parentBlock.Transform(this);
         }
         
         internal ContainerBlock OnWhichConatinerBlock(CodeBlock codeBlock)
         {
             CodeBlock coveredBlock = onWhichBlock(codeBlock.Location);
-            if (coveredBlock != null) Debug.WriteLine(coveredBlock.Location);
             if (coveredBlock == null || coveredBlock == codeBlock || coveredBlock.Top > codeBlock.Top - height) return this;
-            if (coveredBlock.GetType().Equals(containerType)) return (coveredBlock as ContainerBlock).OnWhichConatinerBlock(coveredBlock);
+            if (coveredBlock.GetType().Equals(typeof(ContainerBlock))) return (coveredBlock as ContainerBlock).OnWhichConatinerBlock(coveredBlock);
             return this;
         }
 

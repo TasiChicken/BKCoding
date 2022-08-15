@@ -35,7 +35,7 @@ namespace codingBlock
 
         protected override void detectConatiner()
         {
-            CodeBlock codeBlock = editForm.OnWhichBlock(this.Location);
+            CodeBlock codeBlock = EditForm.instance.OnWhichBlock(this.Location);
 
             InputBox inputBox = codeBlock == null ? null : codeBlock.OnWhichInputBox(this.Location);
 
@@ -72,6 +72,11 @@ namespace codingBlock
         internal override string GetCode()
         {
             return base.GetCode();
+        }
+        
+        internal override bool hasParent()
+        {
+            return inputBox != null;
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -10,7 +9,6 @@ namespace codingBlock
         #region Const
 
         protected const int padding = 5;
-        protected static readonly Type containerType = typeof(ContainerBlock);
 
         #endregion
 
@@ -20,10 +18,10 @@ namespace codingBlock
         private string code;
         private Label[] codeLbls;
         private InputBox[] inputBoxes;
+        private InputBox.SaveData[] inputBlocksSaveData;
         private Point clickPoint;
         private bool isDragging = false;
         private bool _onTrashCan = true;
-        protected EditForm editForm;
         private ContainerBlock _parentBlock;
         protected ContainerBlock parentBlock
         {
@@ -44,8 +42,6 @@ namespace codingBlock
 
         private void CodeBlock_Load(object sender, EventArgs e)
         {
-            this.editForm = this.TopLevelControl as EditForm;
-
             string[] codes = code.Split('#');
 
             codeLbls = new Label[codes.Length];
@@ -79,7 +75,7 @@ namespace codingBlock
 
             for (int i = 0; i < inputBoxes.Length; i++)
             {
-                inputBoxes[i] = new InputBox(this, inputable);
+                inputBoxes[i] = inputBlocksSaveData == null ? new InputBox(this, inputable) : new InputBox(this, inputBlocksSaveData[i]);
                 inputBoxes[i].Top = (height - inputBoxes[i].Height) / 2;
             }
 
@@ -93,7 +89,7 @@ namespace codingBlock
                 CodeBlock codeBlock = clone(this.BackColor, this.code, DragType.normal);
                 codeBlock.Font = this.Font;
                 codeBlock.ForeColor = this.ForeColor;
-                codeBlock.Parent = editForm;
+                codeBlock.Parent = EditForm.instance;
                 codeBlock.Location = Vector2Helper.PositionInTopLevel(this);
                 this.Capture = false;
                 codeBlock.Capture = true;
@@ -105,7 +101,7 @@ namespace codingBlock
             leftConatiner();
             clickPoint = e.Location;
             isDragging = true;
-            this.Parent = editForm;
+            this.Parent = EditForm.instance;
             this.BringToFront();
         }
 
@@ -117,10 +113,10 @@ namespace codingBlock
             point = Vector2Helper.Sub(point, clickPoint);
             this.Location = point;
 
-            bool onTrashCan = !editForm.InCodeRegion(this);
+            bool onTrashCan = !EditForm.instance.InCodeRegion(this);
             if (onTrashCan ^ _onTrashCan)
             {
-                editForm.VisionTrashCan(onTrashCan);
+                EditForm.instance.VisionTrashCan(onTrashCan);
                 _onTrashCan = onTrashCan;
             }
 
@@ -133,8 +129,8 @@ namespace codingBlock
 
             if (_onTrashCan)
             {
-                editForm.ThrowAwayBlock(this);
-                editForm.VisionTrashCan(false);
+                EditForm.instance.ThrowAwayBlock(this);
+                EditForm.instance.VisionTrashCan(false);
                 return;
             }
 
@@ -157,9 +153,9 @@ namespace codingBlock
 
         protected virtual void detectConatiner()
         {
-            CodeBlock codeBlock = editForm.OnWhichBlock(this.Location);
+            CodeBlock codeBlock = EditForm.instance.OnWhichBlock(this.Location);
 
-            if (codeBlock == null || !codeBlock.GetType().Equals(containerType))
+            if (codeBlock == null || !codeBlock.GetType().Equals(typeof(ContainerBlock)))
             {
                 parentBlock = null;
                 return;
@@ -190,8 +186,6 @@ namespace codingBlock
 
         internal const int height = 36;
 
-        internal int index;
-
         protected internal enum DragType
         {
             normal, unmovable, clone
@@ -214,6 +208,42 @@ namespace codingBlock
 
             this.MouseUp += CodeBlock_MouseUp;
             this.MouseMove += CodeBlock_MouseMove;
+        }
+
+        internal CodeBlock(SaveData saveData, ContainerBlock parentBlock)
+        {
+            this.dragType = saveData.dragType;
+            this.code = saveData.code;
+            this.BackColor = saveData.color.ToColor();
+            this.Height = height;
+            this.inputBlocksSaveData = saveData.inputBlocksSaveData;
+
+            this.Load += CodeBlock_Load;
+
+            if (dragType == DragType.unmovable) return;
+
+            this.MouseDown += CodeBlock_MouseDown;
+
+            if (dragType == DragType.clone) return;
+
+            this.MouseUp += CodeBlock_MouseUp;
+            this.MouseMove += CodeBlock_MouseMove;
+
+            this.parentBlock = parentBlock;
+        }
+
+        internal virtual SaveData CreateSaveData()
+        {
+            if (this.inputBoxes == null)
+                return new SaveData(this.GetType(), this.BackColor, this.code, this.dragType, this.Location, null);
+
+            if (inputBlocksSaveData == null)
+                inputBlocksSaveData = new InputBox.SaveData[inputBoxes.Length];
+
+            for(int i = 0; i < inputBlocksSaveData.Length; i++)
+                inputBlocksSaveData[i] = inputBoxes[i].CreateSaveData();
+            
+            return new SaveData(this.GetType(), this.BackColor, this.code, this.dragType, this.Location, inputBlocksSaveData);
         }
 
         internal virtual string GetCode()
@@ -243,13 +273,14 @@ namespace codingBlock
 
             int x = point.X - Vector2Helper.PositionInTopLevel(this).X;
 
-            foreach (InputBox inputBox in inputBoxes)
-            {
-                if (inputBox.Left > x) return null;
-                if (inputBox.Right < x) continue;
-                if (inputBox.dataBlock == null) return inputBox;
-                return inputBox.dataBlock.OnWhichInputBox(point);
-            }
+            if (inputBoxes != null) 
+                foreach (InputBox inputBox in inputBoxes)
+                {
+                    if (inputBox.Left > x) return null;
+                    if (inputBox.Right < x) continue;
+                    if (inputBox.dataBlock == null) return inputBox;
+                    return inputBox.dataBlock.OnWhichInputBox(point);
+                }
 
             return null;
         }
@@ -257,6 +288,81 @@ namespace codingBlock
         internal new virtual void BringToFront()
         {
             base.BringToFront();
+        }
+
+        [Serializable]
+        internal struct SaveData
+        {
+            public SaveData(Type type, Color color, string code, DragType dragType, Point location, InputBox.SaveData[] inputBlocksSaveData, SaveData[] codeBlocksSaveData = null)
+            {
+                if (type.Equals(typeof(CodeBlock)))
+                    this.blockType = BlockType.code;
+                else if (type.Equals(typeof(ContainerBlock)))
+                    this.blockType = BlockType.container;
+                else
+                    this.blockType = BlockType.data;
+
+                this.color = new M_Color(color);
+                this.code = code;
+                this.location = location;
+                this.inputBlocksSaveData = inputBlocksSaveData;
+                this.childrenSaveData = codeBlocksSaveData;
+                this.dragType = dragType;
+            }
+
+            public BlockType blockType { get; set; }
+            public M_Color color { get; set; }
+            public string code { get; set; }
+            public Point location { get; set; }
+            public InputBox.SaveData[] inputBlocksSaveData { get; set; }
+            public SaveData[] childrenSaveData { get; set; }
+            public DragType dragType { get; set; }
+
+            public CodeBlock ToCodeBlock(ContainerBlock parentBlock = null)
+            {
+                switch (blockType)
+                {
+                    case BlockType.code:
+                        return new CodeBlock(this, parentBlock);
+                    case BlockType.container:
+                        return new ContainerBlock(this, parentBlock);
+                    case BlockType.data:
+                        return new DataBlock(color.ToColor(), code);
+                }
+
+                return new CodeBlock(this, parentBlock);
+            }
+
+            public enum BlockType
+            {
+                code, container, data
+            }
+
+            public struct M_Color
+            {
+                public M_Color(Color color)
+                {
+                    this.A = color.A;
+                    this.R = color.R;
+                    this.G = color.G;
+                    this.B = color.B;
+                }
+
+                public byte A { get; set; }
+                public byte R { get; set; }
+                public byte G { get; set; }
+                public byte B { get; set; }
+
+                public Color ToColor()
+                {
+                    return Color.FromArgb(this.A, this.R, this.G, this.B);
+                }
+            }
+        }
+
+        internal virtual bool hasParent()
+        {
+            return parentBlock != null;
         }
 
         #endregion
