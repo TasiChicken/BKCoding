@@ -112,7 +112,6 @@ namespace codingBlock
                 foreach (SaveData childrenData in saveData.childrenSaveData)
                 {
                     CodeBlock codeBlock = childrenData.ToCodeBlock(this);
-                    EditForm.instance.Controls.Add(codeBlock);
                     this.InsertChild(codeBlock);
                 }
         }

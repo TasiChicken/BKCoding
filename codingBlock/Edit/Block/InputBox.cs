@@ -39,6 +39,11 @@ namespace codingBlock
             this.BackColor = Color.Transparent;
         }
 
+        private void InputBox_LocationChanged(object sender, EventArgs e)
+        {
+            MoveDataBlock();
+        }
+
         #endregion
 
         #region Function
@@ -51,7 +56,7 @@ namespace codingBlock
                 this.Top = (CodeBlock.height - this.Height) / 2;
                 return;
             }
-
+            
             _textBox.Width = dataBlock.Width - _textBox.Margin.Horizontal;
             this.Height = dataBlock.Height;
             this.Top = 0;
@@ -70,15 +75,14 @@ namespace codingBlock
             set
             {
                 this._dataBlock = value;
-
                 tranformWithDataBlock(value);
-
+                
                 _textBox.Visible = value == null;
 
                 if (value == null) return;
 
-                value.Parent = this;
-                value.Location = new Point();
+                value.BringToFront();
+                value.Location = Vector2Helper.PositionInTopLevel(this);
             }
         }
 
@@ -96,6 +100,7 @@ namespace codingBlock
             this._textBox.TextChanged += _textBox_TextChanged;
             this._textBox.Enter += _textBox_Enter;
             this._textBox.Leave += _textBox_Leave;
+            this.LocationChanged += InputBox_LocationChanged;
         }
 
         internal InputBox(CodeBlock parent, SaveData saveData)
@@ -109,13 +114,11 @@ namespace codingBlock
             this._textBox.TextChanged += _textBox_TextChanged;
             this._textBox.Enter += _textBox_Enter;
             this._textBox.Leave += _textBox_Leave;
-
-            _textBox.Text = saveData.text;
+            this.LocationChanged += InputBox_LocationChanged;
 
             if (!saveData.dataBlockSaveData.HasValue) return;
 
-            MessageBox.Show(saveData.dataBlockSaveData.Value.code);
-            this.dataBlock = saveData.dataBlockSaveData.Value.ToCodeBlock() as DataBlock;
+            this.dataBlock = new DataBlock(saveData.dataBlockSaveData.Value, this);
         }
 
         internal void PreviewBlock(DataBlock dataBlock)
@@ -123,6 +126,21 @@ namespace codingBlock
             tranformWithDataBlock(dataBlock);
 
             this.BackColor = dataBlock == null ? Color.Transparent : Colors.Gray114;
+        }
+
+        internal void MoveDataBlock()
+        {
+            if (dataBlock == null) return;
+            dataBlock.BringToFront();
+            dataBlock.Location = Vector2Helper.PositionInTopLevel(this);
+        }
+
+        internal new void BringToFront()
+        {
+            base.BringToFront();
+
+            if (dataBlock == null) return;
+            dataBlock.BringToFront();
         }
 
         internal string GetCode()

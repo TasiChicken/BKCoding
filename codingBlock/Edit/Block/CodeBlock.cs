@@ -138,6 +138,13 @@ namespace codingBlock
             this.BringToFront();
         }
 
+        private void CodeBlock_LocationChanged(object sender, EventArgs e)
+        {
+            if (inputBoxes == null) return;
+            foreach (InputBox inputBox in inputBoxes)
+                inputBox.MoveDataBlock();
+        }
+
         #endregion
 
         #region Function
@@ -199,6 +206,7 @@ namespace codingBlock
             this.Height = height;
 
             this.Load += CodeBlock_Load;
+            this.LocationChanged += CodeBlock_LocationChanged;
 
             if (dragType == DragType.unmovable) return;
 
@@ -219,6 +227,7 @@ namespace codingBlock
             this.inputBlocksSaveData = saveData.inputBlocksSaveData;
 
             this.Load += CodeBlock_Load;
+            this.LocationChanged += CodeBlock_LocationChanged;
 
             if (dragType == DragType.unmovable) return;
 
@@ -230,6 +239,7 @@ namespace codingBlock
             this.MouseMove += CodeBlock_MouseMove;
 
             this.parentBlock = parentBlock;
+            EditForm.instance.Controls.Add(this);
         }
 
         internal virtual SaveData CreateSaveData()
@@ -288,6 +298,10 @@ namespace codingBlock
         internal new virtual void BringToFront()
         {
             base.BringToFront();
+
+            if (inputBoxes == null) return;
+            foreach (InputBox inputBox in inputBoxes)
+                inputBox.BringToFront();
         }
 
         [Serializable]
@@ -327,7 +341,7 @@ namespace codingBlock
                     case BlockType.container:
                         return new ContainerBlock(this, parentBlock);
                     case BlockType.data:
-                        return new DataBlock(color.ToColor(), code);
+                        return new DataBlock(this, null);
                 }
 
                 return new CodeBlock(this, parentBlock);

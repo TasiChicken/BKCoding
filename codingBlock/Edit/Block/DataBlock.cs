@@ -16,7 +16,7 @@ namespace codingBlock
 
         private void DataBlock_Resize(object sender, EventArgs e)
         {
-            if(inputBox == null) return;
+            if (inputBox == null) return;
             inputBox.dataBlock = this;
         }
 
@@ -66,6 +66,12 @@ namespace codingBlock
 
         internal DataBlock(Color color, string code, DragType dragType = DragType.normal) : base(color, code, dragType)
         {
+            this.Resize += DataBlock_Resize;
+        }
+
+        internal DataBlock(SaveData saveData, InputBox inputBox) : base(saveData, null)
+        {
+            this.inputBox = inputBox;
             this.Resize += DataBlock_Resize;
         }
 
