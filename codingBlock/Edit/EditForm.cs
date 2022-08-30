@@ -74,9 +74,7 @@ namespace codingBlock
                     CodeBlock codeBlock = saveData.ToCodeBlock();
 
                     if (saveData.code.Equals(mainCode))
-                    {
                         mainBlock = codeBlock as ContainerBlock;
-                    }
 
                     this.Controls.Add(codeBlock);
                     codeBlock.Location = saveData.location;

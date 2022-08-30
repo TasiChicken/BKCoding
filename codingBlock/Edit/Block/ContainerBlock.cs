@@ -223,7 +223,7 @@ namespace codingBlock
         {
             CodeBlock coveredBlock = onWhichBlock(codeBlock.Location);
             if (coveredBlock == null || coveredBlock == codeBlock || coveredBlock.Top > codeBlock.Top - height) return this;
-            if (coveredBlock.GetType().Equals(typeof(ContainerBlock))) return (coveredBlock as ContainerBlock).OnWhichConatinerBlock(coveredBlock);
+            if (coveredBlock.GetType().Equals(typeof(ContainerBlock))) return (coveredBlock as ContainerBlock).OnWhichConatinerBlock(codeBlock);
             return this;
         }
 
