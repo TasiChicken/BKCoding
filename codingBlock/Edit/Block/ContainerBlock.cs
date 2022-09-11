@@ -130,6 +130,7 @@ namespace codingBlock
             foreach(CodeBlock codeBlock in children)
             {
                 saveData.childrenSaveData[i] = codeBlock.CreateSaveData();
+                i++;
             }
 
             return saveData;

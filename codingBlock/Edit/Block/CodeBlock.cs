@@ -334,8 +334,6 @@ namespace codingBlock
 
             public CodeBlock ToCodeBlock(ContainerBlock parentBlock = null)
             {
-                //if (this.code == null) return null;
-
                 switch (blockType)
                 {
                     case BlockType.code:
