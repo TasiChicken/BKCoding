@@ -244,6 +244,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <None Include="Resources\blocks.txt" />
+    <None Include="Resources\1.txt" />
     <None Include="Resources\trashCan.png" />
     <None Include="Resources\Icon.ico" />
   </ItemGroup>

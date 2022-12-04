@@ -61,6 +61,74 @@ namespace codingBlock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 資料@#$871317
+        ///N$ #
+        ///運算子@#$8e4d0d
+        ///N#
+        ///I#++
+        ///I#--
+        ///I(#)
+        ///I#.#
+        ///I#-&gt;#
+        ///I++#
+        ///I--#
+        ///I+#
+        ///I-#
+        ///I!#
+        ///I~#
+        ///I($)#
+        ///I*#
+        ///I&amp;#
+        ///Isizeof(#)
+        ///I# * #
+        ///I# / #
+        ///I# % #
+        ///I# + #
+        ///I# - #
+        ///I# &lt;&lt; #
+        ///I# &gt;&gt; #
+        ///I# &lt; #
+        ///I# &lt;= #
+        ///I# &gt; #
+        ///I# &gt;= #
+        ///I# == #
+        ///I# != #
+        ///I# &amp; #
+        ///I# ^ #
+        ///I# | #
+        ///I# &amp;&amp; #
+        ///I# || #
+        ///I# ? # @#$ #
+        ///I# = #
+        ///I# += #
+        ///I# -= #
+        ///I# *= #
+        ///I# /= #
+        ///I# %= #
+        ///I# &lt;&lt;= #
+        ///I# &gt;&gt;= #
+        ///I# &amp;= #
+        ///I# ^= #
+        ///I# |= #
+        ///Ithrow #
+        ///I#, #
+        ///選擇@#$857b02
+        ///Cif (#) \
+        ///Celse if (#) \
+        ///Celse \
+        ///Cswitch (#) \
+        ///Ncase #@#$
+        ///Nbreak
+        ///迴圈@#$00823c
+        ///Cwh [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string blocks {
+            get {
+                return ResourceManager.GetString("blocks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap exit {

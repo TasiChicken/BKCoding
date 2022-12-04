@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.IO;
 
 namespace codingBlock
 {
@@ -11,21 +13,7 @@ namespace codingBlock
         
         private const int _playBtnPadding = 5;
         private const int mainPnlMinWidth = 150;
-        private const string mainCode = "int main()";
-
-        #endregion
-
-        #region Data
-
-        private static readonly BlockType[] blockTypes =
-        {
-            new BlockType("I/O", Color.FromArgb(135, 19, 23)),
-            new BlockType("運算", Color.FromArgb(142, 77, 13)),
-            new BlockType("條件", Color.FromArgb(133, 123, 2)),
-            new BlockType("迴圈", Color.FromArgb(0, 130, 60)),
-            new BlockType("資料", Color.FromArgb(58, 48, 134)),
-            new BlockType("函式", Color.FromArgb(128, 29, 100))
-        };
+        private const string mainCode = "int main()\\";
 
         #endregion
 
@@ -48,6 +36,8 @@ namespace codingBlock
             }
         }
         private List<CodeBlock> codeBlocks = new List<CodeBlock>();
+        private readonly List<BlockType> blockTypes = new List<BlockType>();
+        private readonly List<List<CodeBlock>> blockLists = new List<List<CodeBlock>>();
 
         #endregion
 
@@ -265,13 +255,19 @@ namespace codingBlock
 
         private void addBlockTypeBtn()
         {
-            Size size = new Size(_blockTypePnl.Width, _blockTypePnl.Width);
+            int maxX = 50;
+            foreach (var bT in blockTypes) maxX = Math.Max(TextRenderer.MeasureText(bT.name, _blockTypePnl.Font).Width, maxX);
+            maxX += 5;
+            if (maxX > _blockTypePnl.Width) _blockTypePnl.Width = maxX;
+
+            Size size = new Size(maxX, 55);
             Point location = new Point();
 
-            for (int i = 0; i < blockTypes.Length; i++)
+            for (int i = 0; i < blockTypes.Count; i++)
             {
                 BlockTypeButton button = new BlockTypeButton(i, this, blockTypes[i].color, blockTypes[i].name);
                 _blockTypePnl.Controls.Add(button);
+                button.Font = _blockTypePnl.Font;
                 button.Size = size;
                 button.Location = location;
                 location.Y += size.Height;
@@ -311,25 +307,60 @@ namespace codingBlock
             InitializeComponent();
 
             this.ControlAdded += EditForm_ControlAdded;
+
+            StringReader reader = new StringReader(Properties.Resources.blocks);
+            string line;
+            while ((line = reader.ReadLine()) != null)
+                if (line.Contains("@#$"))
+                {
+                    string[] data = line.Split(new string[] { "@#$" }, StringSplitOptions.None);
+                    BlockType type = new BlockType(data[0], Color.FromArgb(Convert.ToInt32("FF" + data[1], 16)));
+                    blockTypes.Add(type);
+                    blockLists.Add(new List<CodeBlock>());
+                }
+                else
+                {
+                    CodeBlock codeBlock = null;
+                    Color color = blockTypes.Last().color;
+                    string code = line.Substring(1);
+                    CodeBlock.DragType dragType = CodeBlock.DragType.clone;
+
+                    switch (line[0])
+                    {
+                        case 'N':
+                            codeBlock = new CodeBlock(color, code + (code.Last() == ':' ? "" : ";"), dragType);
+                            break;
+                        case 'I':
+                            codeBlock = new DataBlock(color, code, dragType);
+                            break;
+                        case 'C':
+                            codeBlock = new ContainerBlock(color, code, dragType);
+                            break;
+                    }
+
+                    _blocksPnl.Controls.Add(codeBlock);
+                    codeBlock.Location = new Point(5, 5);
+                    if (blockLists.Last().Count > 0) codeBlock.Top += blockLists.Last().Last().Bottom;
+                    blockLists.Last().Add(codeBlock);
+                    codeBlock.Hide();
+                }
         }
 
         internal void ChangeBlockType(int index)
         {
-            _blocksPnl.Controls.Clear();
-            _blocksPnl.Controls.Add(_trashCan);
-
-            for (int i = 0; i < blockTypes.Length; i++)
+            for (int i = 0; i < blockTypes.Count; i++)
             {
                 BlockTypeButton button = _blockTypePnl.Controls[i] as BlockTypeButton;
-                if (button == null) continue;
+                //if (button == null) continue;
                 button.isChecked = i == index;
+                foreach(var block in blockLists[i]) block.Visible = i == index;
             }
 
+            /*
             _blocksPnl.BorderStyle = BorderStyle.None;
             _splitter.BackColor = Colors.Black26;
             _splitter.Width = 10;
-
-            test(index);
+            */
         }
 
         internal bool InCodeRegion(CodeBlock codeBlock)
@@ -362,49 +393,5 @@ namespace codingBlock
         }
 
         #endregion
-    
-        private void test(int index)
-        {
-            CodeBlock codeBlock;
-            switch (index)
-            {
-                case 0:
-                    codeBlock = new CodeBlock(blockTypes[index].color, "printf (#)", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 5);
-                    codeBlock = new CodeBlock(blockTypes[index].color, "sacnf (#)", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 55);
-                    break;
-                case 1:
-                    codeBlock = new DataBlock(blockTypes[index].color, "# + #", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 5);
-                    codeBlock = new DataBlock(blockTypes[index].color, "# - #", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 55);
-                    codeBlock = new DataBlock(blockTypes[index].color, "# * #", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 105);
-                    codeBlock = new DataBlock(blockTypes[index].color, "# / #", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 155);
-                    break;
-                case 2:
-                    codeBlock = new ContainerBlock(blockTypes[index].color, "if (#)", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 5);
-                    codeBlock = new ContainerBlock(blockTypes[index].color, "else if (#)", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 205);
-                    codeBlock = new ContainerBlock(blockTypes[index].color, "else", CodeBlock.DragType.clone);
-                    _blocksPnl.Controls.Add(codeBlock);
-                    codeBlock.Location = new Point(5, 405);
-                    break;
-            }
-
-            
-            
-        }
     }
 }

@@ -1,0 +1,67 @@
+資料@#$871317
+N$ #
+運算子@#$8e4d0d
+N#
+I#++
+I#--
+I(#)
+I#.#
+I#->#
+I++#
+I--#
+I+#
+I-#
+I!#
+I~#
+I($)#
+I*#
+I&#
+Isizeof(#)
+I# * #
+I# / #
+I# % #
+I# + #
+I# - #
+I# << #
+I# >> #
+I# < #
+I# <= #
+I# > #
+I# >= #
+I# == #
+I# != #
+I# & #
+I# ^ #
+I# | #
+I# && #
+I# || #
+I# ? # @#$ #
+I# = #
+I# += #
+I# -= #
+I# *= #
+I# /= #
+I# %= #
+I# <<= #
+I# >>= #
+I# &= #
+I# ^= #
+I# |= #
+Ithrow #
+I#, #
+選擇@#$857b02
+Cif (#) \
+Celse if (#) \
+Celse \
+Cswitch (#) \
+Ncase #@#$
+Nbreak
+迴圈@#$00823c
+Cwhile (#) \
+Cdo \ while (#)
+Cfor (#; #; #) \
+Nbreak
+Ncontinue
+函式@#$3a3086
+Nreturn
+stdio.h@#$801d64

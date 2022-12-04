@@ -226,6 +226,19 @@ namespace codingBlock
             if (coveredBlock == null || coveredBlock == codeBlock || coveredBlock.Top > codeBlock.Top - height) return this;
             if (coveredBlock.GetType().Equals(typeof(ContainerBlock))) return (coveredBlock as ContainerBlock).OnWhichConatinerBlock(codeBlock);
             return this;
+
+            string numbers = "";
+            for (int i = 0; i < 46; i++)
+                numbers += i < 10 ? i : (char)('A' + i);
+
+            int input = 200;
+            string answer = "";
+            int N = 18;
+            while(input!= 0)
+            {
+                answer = numbers[input % N] + answer;
+                input /= N;
+            }
         }
 
         #endregion
