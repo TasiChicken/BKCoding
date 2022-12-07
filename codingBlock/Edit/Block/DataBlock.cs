@@ -75,11 +75,6 @@ namespace codingBlock
             this.Resize += DataBlock_Resize;
         }
 
-        internal override string GetCode()
-        {
-            return base.GetCode();
-        }
-        
         internal override bool hasParent()
         {
             return inputBox != null;

@@ -13,7 +13,7 @@ namespace codingBlock
         
         private const int _playBtnPadding = 5;
         private const int mainPnlMinWidth = 150;
-        private const string mainCode = "int main()\\";
+        private const string mainCode = "int main()";
 
         #endregion
 
@@ -23,18 +23,6 @@ namespace codingBlock
         private ProjectData _projectData;
         private SelectProjectForm selectProjectForm;
         private bool _hasSaved;
-        private bool hasSaved
-        {
-            get
-            {
-                return _hasSaved;
-            }
-            set
-            {
-                _hasSaved = value;
-                if (_projectData != null) _header.SetTitle(_projectData.fileNameNoExtension + (value ? "" : "(未儲存)"));
-            }
-        }
         private List<CodeBlock> codeBlocks = new List<CodeBlock>();
         private readonly List<BlockType> blockTypes = new List<BlockType>();
         private readonly List<List<CodeBlock>> blockLists = new List<List<CodeBlock>>();
@@ -48,6 +36,7 @@ namespace codingBlock
             FormResizer.AddResizer(this);
             
             _blockTypePnl.MouseWheel += EventHandlers.Scrollable_MouseWheel;
+            _blocksPnl.MouseWheel += EventHandlers.Scrollable_MouseWheel;
 
             _header.SetExitBtnAction(new Header.ExitAction(closeThisForm));
             _header.isMaxWindow = true;
@@ -70,10 +59,12 @@ namespace codingBlock
                     codeBlock.Location = saveData.location;
                     codeBlock.BringToFront();
                 }
+            
+                hasSaved = true;
             }
             else
             {
-                mainBlock = new ContainerBlock(Color.FromArgb(128, 29, 100), mainCode, CodeBlock.DragType.unmovable);
+                mainBlock = new ContainerBlock(Color.FromArgb(58, 48, 134), mainCode, CodeBlock.DragType.unmovable);
                 this.Controls.Add(mainBlock);
                 mainBlock.BringToFront();
             }
@@ -109,7 +100,11 @@ namespace codingBlock
 
         private void _playBtn_Click(object sender, EventArgs e)
         {
-            MessageDialog.Show(mainBlock.GetCode());
+            MessageDialog.Show(mainBlock.ToString());
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "C File | .c";
+            dialog.ShowDialog();
+            File.WriteAllText(dialog.FileName, mainBlock.ToString());
         }
 
         #endregion
@@ -297,6 +292,18 @@ namespace codingBlock
         #region Internal
 
         internal static EditForm instance;
+        internal bool hasSaved
+        {
+            get
+            {
+                return _hasSaved;
+            }
+            set
+            {
+                _hasSaved = value;
+                if (_projectData != null) _header.SetTitle(_projectData.fileNameNoExtension + (value ? "" : "(未儲存)"));
+            }
+        }
 
         internal EditForm(ProjectData projectData, SelectProjectForm selectProjectForm)
         {

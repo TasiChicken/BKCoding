@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace codingBlock
@@ -33,6 +34,20 @@ namespace codingBlock
             {
                 if (_parentBlock != value && _parentBlock != null) _parentBlock.RemoveChild(this);
                 _parentBlock = value;
+            }
+        }
+        protected string indent
+        {
+            get
+            {
+                StringBuilder builder = new StringBuilder();
+                var parent = parentBlock;
+                while (parent != null)
+                {
+                    parent = parent.parentBlock;
+                    builder.Append('\t');
+                }
+                return builder.ToString();
             }
         }
 
@@ -84,6 +99,8 @@ namespace codingBlock
 
         private void CodeBlock_MouseDown(object sender, MouseEventArgs e)
         {
+            EditForm.instance.hasSaved = false;
+
             if (dragType == DragType.clone)
             {
                 CodeBlock codeBlock = clone(this.BackColor, this.code, DragType.normal);
@@ -256,9 +273,15 @@ namespace codingBlock
             return new SaveData(this.GetType(), this.BackColor, this.code, this.dragType, this.Location, inputBlocksSaveData);
         }
 
-        internal virtual string GetCode()
+        public override string ToString()
         {
-            return "";
+            StringBuilder builder = new StringBuilder(indent);
+            for (int i = 0; i < codeLbls.Length; i++)
+            {
+                builder.Append(codeLbls[i].Text);
+                if (inputBoxes != null && i < inputBoxes.Length) builder.Append(inputBoxes[i].ToString());
+            }
+            return builder.ToString();
         }
 
         internal void LocateCodeControls(InputBox inputBox)

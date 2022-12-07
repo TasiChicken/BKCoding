@@ -17,6 +17,8 @@ namespace codingBlock
 
         private void _textBox_TextChanged(object sender, EventArgs e)
         {
+            EditForm.instance.hasSaved = false;
+
             Graphics g = _textBox.CreateGraphics();
             int textWidth = (int)g.MeasureString(_textBox.Text, _textBox.Font).Width + 1;
 
@@ -116,6 +118,7 @@ namespace codingBlock
             this._textBox.Leave += _textBox_Leave;
             this.LocationChanged += InputBox_LocationChanged;
 
+            _textBox.Text = saveData.text;
             if (!saveData.dataBlockSaveData.HasValue) return;
 
             this.dataBlock = new DataBlock(saveData.dataBlockSaveData.Value, this);
@@ -143,9 +146,9 @@ namespace codingBlock
             dataBlock.BringToFront();
         }
 
-        internal string GetCode()
+        public override string ToString()
         {
-            return _dataBlock == null ? _textBox.Text : _dataBlock.GetCode();
+            return _dataBlock == null ? _textBox.Text : _dataBlock.ToString();
         }
 
         internal SaveData CreateSaveData()

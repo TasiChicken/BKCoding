@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace codingBlock
@@ -109,16 +110,22 @@ namespace codingBlock
             this.Paint += ContainerBlock_Paint;
 
             if (saveData.childrenSaveData != null)
-                foreach (SaveData childrenData in saveData.childrenSaveData)
+                for (int i = saveData.childrenSaveData.Length - 1; i >= 0; i--)
                 {
-                    CodeBlock codeBlock = childrenData.ToCodeBlock(this);
+                    CodeBlock codeBlock = saveData.childrenSaveData[i].ToCodeBlock(this);
                     this.InsertChild(codeBlock);
                 }
         }
 
-        internal override string GetCode()
+        public override string ToString()
         {
-            return base.GetCode();
+            StringBuilder builder = new StringBuilder(base.ToString());
+            builder.AppendLine();
+            builder.AppendLine(indent + "{");
+            foreach (var v in children)
+                builder.AppendLine(v.ToString());
+            builder.Append(indent + "}");
+            return builder.ToString();
         }
 
         internal override SaveData CreateSaveData()

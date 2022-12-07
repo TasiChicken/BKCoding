@@ -1,6 +1,20 @@
 資料@#$871317
-N$ #
-Nstatic $ #
+N# #
+Iunsigned #
+Isigned #
+I#*
+Ichar
+Iint
+Ishort
+Ilong
+Ilong long
+Ifloat
+Idouble
+Ilong double
+Ibool
+Istruct
+Iunion
+Ienum
 運算子@#$8e4d0d
 N#
 I#++
@@ -14,9 +28,9 @@ I+#
 I-#
 I!#
 I~#
-I($)#
+I(#)#
 I*#
-I&#
+I&&#
 Isizeof(#)
 I# * #
 I# / #
@@ -31,10 +45,10 @@ I# > #
 I# >= #
 I# == #
 I# != #
-I# & #
+I# && #
 I# ^ #
 I# | #
-I# && #
+I# &&&& #
 I# || #
 I# ? # : #
 I# = #
@@ -45,7 +59,7 @@ I# /= #
 I# %= #
 I# <<= #
 I# >>= #
-I# &= #
+I# &&= #
 I# ^= #
 I# |= #
 Ithrow #
@@ -61,9 +75,73 @@ Nbreak
 Cwhile (#)
 Cdo
 Nwhile (#)
-Cfor (#; #; #)
+Cfor (# # #)
 Nbreak
 Ncontinue
 函式@#$3a3086
 Nreturn #
 stdio.h@#$801d64
+Isize_t
+IFILE
+Ifpos_t
+INULL
+I_IOFBF
+I_IOLBF
+I_IONBF
+IBUFSIZ
+IEOF
+IFOPEN_MAX
+IFILENAME_MAX
+IL_tmpnam
+ISEEK_CUR
+ISEEK_END
+ISEEK_SET
+ITMP_MAX
+Istderr
+Istdin
+Istdout
+Nremove(#)
+Nrename(#, #)
+Ntmpfile()
+Ntmpnam(#)
+Nfclose(#)
+Nfflush(#)
+Nfopen(#, #)
+Nfreopen(#, #, #)
+Nsetbuf(#, #)
+Nsetvbuf(#, #, #, #)
+Nfprintf(#, #)
+Nfscanf(#, #)
+Nprintf(#)
+Nscanf(#, #)
+Nsnprintf(#, #, #)
+Nsprintf(#, #)
+Nsscanf(#, #)
+Nvfprintf(#, #, #)
+Nvfscanf(#, #, #)
+Nvprintf(#, #)
+Nvscanf(#, #)
+Nvsnprintf(#, #, #, #)
+Nvsprintf(#, #, #)
+Nvsscanf(#, #, #)
+Nfgetc(#)
+Nfgets(#, #, #)
+Nfputc(#, #)
+Nfputs(#, #)
+Ngetc(#)
+Ngetchar()
+Nputc(#, #)
+Nputchar(Nc)
+Nputs(#)
+Nungetc(#, #)
+Nfread(#, #, #, #)
+Nfwrite(#, #, #, #)
+Nfgetpos(#, #)
+Nfseek(#, #, #)
+Nfsetpos(#, #)
+Nftell(#)
+Nrewind(#)
+Nclearerr(#)
+Nfeof(#)
+Nferror(#)
+Nperror(#)
