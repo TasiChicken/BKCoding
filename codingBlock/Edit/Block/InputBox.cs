@@ -161,6 +161,12 @@ namespace codingBlock
             return data;
         }
 
+        internal void ThrowAway()
+        {
+            if (dataBlock == null) return;
+            dataBlock.ThrowAway();
+        }
+
         [Serializable]
         internal struct SaveData
         {

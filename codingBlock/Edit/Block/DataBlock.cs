@@ -74,8 +74,8 @@ namespace codingBlock
             this.inputBox = inputBox;
             this.Resize += DataBlock_Resize;
         }
-
-        internal override bool hasParent()
+        
+        internal override bool HasParent()
         {
             return inputBox != null;
         }

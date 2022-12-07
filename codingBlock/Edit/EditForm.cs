@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace codingBlock
 {
@@ -100,11 +101,7 @@ namespace codingBlock
 
         private void _playBtn_Click(object sender, EventArgs e)
         {
-            MessageDialog.Show(mainBlock.ToString());
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "C File | .c";
-            dialog.ShowDialog();
-            File.WriteAllText(dialog.FileName, mainBlock.ToString());
+            
         }
 
         #endregion
@@ -128,7 +125,10 @@ namespace codingBlock
 
         private void _exportCFileCmsi_Click(object sender, EventArgs e)
         {
-
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "C File | *.c";
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            File.WriteAllText(dialog.FileName, convertToCode());
         }
 
         private void _exportExeFileCmsi_Click(object sender, EventArgs e)
@@ -189,7 +189,7 @@ namespace codingBlock
             List<CodeBlock.SaveData> blocksSaveData = new List<CodeBlock.SaveData>();
 
             foreach (CodeBlock codeBlock in codeBlocks)
-                if (!codeBlock.hasParent())
+                if (!codeBlock.HasParent())
                     blocksSaveData.Add(codeBlock.CreateSaveData());
 
             string saveContent = FileHelper.ToJson<List<CodeBlock.SaveData>>(blocksSaveData);
@@ -269,6 +269,14 @@ namespace codingBlock
             }
 
             ChangeBlockType(0);
+        }
+
+        private string convertToCode()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine($"#include<{"stdio.h"}>");
+            builder.Append(mainBlock.ToString().Replace("&&", "&"));
+            return builder.ToString();
         }
 
         #endregion

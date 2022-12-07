@@ -1,5 +1,7 @@
 資料@#$871317
-N# #
+N#
+I# #
+I#[#]
 Iunsigned #
 Isigned #
 I#*
@@ -19,7 +21,6 @@ Ienum
 N#
 I#++
 I#--
-I(#)
 I#.#
 I#->#
 I++#
@@ -75,7 +76,7 @@ Nbreak
 Cwhile (#)
 Cdo
 Nwhile (#)
-Cfor (# # #)
+Cfor (#; #; #)
 Nbreak
 Ncontinue
 函式@#$3a3086

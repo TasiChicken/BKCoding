@@ -248,6 +248,13 @@ namespace codingBlock
             }
         }
 
+        internal override void ThrowAway()
+        {
+            foreach (var v in children)
+                v.ThrowAway();
+            base.ThrowAway();
+        }
+
         #endregion
     }
 }

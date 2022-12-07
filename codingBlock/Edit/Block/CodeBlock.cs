@@ -146,7 +146,7 @@ namespace codingBlock
 
             if (_onTrashCan)
             {
-                EditForm.instance.ThrowAwayBlock(this);
+                ThrowAway();
                 EditForm.instance.VisionTrashCan(false);
                 return;
             }
@@ -397,9 +397,17 @@ namespace codingBlock
             }
         }
 
-        internal virtual bool hasParent()
+        internal virtual bool HasParent()
         {
             return parentBlock != null;
+        }
+
+        internal virtual void ThrowAway()
+        {
+            if (inputBoxes != null)
+            foreach (var v in inputBoxes)
+                v.ThrowAway();
+            EditForm.instance.ThrowAwayBlock(this);
         }
 
         #endregion
