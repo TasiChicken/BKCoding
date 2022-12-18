@@ -278,7 +278,7 @@ namespace codingBlock
             StringBuilder builder = new StringBuilder(indent);
             for (int i = 0; i < codeLbls.Length; i++)
             {
-                builder.Append(codeLbls[i].Text);
+                builder.Append(codeLbls[i].Text.Replace("&&", "&"));
                 if (inputBoxes != null && i < inputBoxes.Length) builder.Append(inputBoxes[i].ToString());
             }
             return builder.ToString();

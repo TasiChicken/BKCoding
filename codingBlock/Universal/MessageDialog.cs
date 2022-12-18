@@ -27,6 +27,7 @@ namespace codingBlock
         private string content;
         private string caption;
         private MessageBoxButtons buttons;
+        private Button[] btns;
 
         #endregion
         
@@ -34,6 +35,8 @@ namespace codingBlock
 
         private void MessageDialog_Load(object sender, EventArgs e)
         {
+            btns = new Button[] { _yesBtn, _okBtn, _noBtn, _copyBtn };
+
             _header.SetTitle(caption);
             _header.HideButtons();
             _contentLbl.Text = content;
@@ -46,27 +49,22 @@ namespace codingBlock
             size = Vector2Helper.Div(size, 2);
             this.Location = new Point(size);
 
-            _okBtn.Top =_noBtn.Top = _yesBtn.Top = this.Height - padding - _okBtn.Height;
-            int width = this.Width / 3;
+            int top = this.Height - padding - _okBtn.Height;
+            int width = this.Width / btns.Length;
+            for(int i = 0; i < btns.Length; i++)
+            {
+                btns[i].Top = top;
+                btns[i].Width = width;
+                btns[i].Left = width * i;
+            }
             switch (buttons)
             {
                 case MessageBoxButtons.OK:
                     _okBtn.Visible = true;
-                    
-                    _okBtn.Width = width;
-                    
-                    if (width < _okBtn.MinimumSize.Width) _okBtn.Left = (this.Width - _okBtn.Width) / 2;
-                    else _okBtn.Left = width;
                     break;
                 case MessageBoxButtons.YesNo:
                     _yesBtn.Visible = true;
                     _noBtn.Visible = true;
-                    
-                    _yesBtn.Width = _noBtn.Width = width;
-                    
-                    int margin = width < _yesBtn.MinimumSize.Width ? (this.Width - _yesBtn.Width * 2) / 3 : this.Width / 9;
-                    _yesBtn.Left = margin;
-                    _noBtn.Left = _yesBtn.Right + margin;
                     break;
             }
         }
@@ -84,6 +82,11 @@ namespace codingBlock
         private void _noBtn_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.No;
+        }
+
+        private void _copyBtn_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(_contentLbl.Text);
         }
 
         private void MessageDialog_Paint(object sender, PaintEventArgs e)

@@ -7,6 +7,12 @@ namespace codingBlock
 {
     public partial class SelectProjectForm : Form
     {
+        #region Const
+
+        private const string saveFileName = "ProjectListData";
+
+        #endregion
+
         #region Field
 
         private List<ProjectData> projectDataList;
@@ -20,7 +26,7 @@ namespace codingBlock
 
         private void SelectProjectForm_Load(object sender, EventArgs e)
         {
-            string projectDataString = Properties.Settings.Default.projectDatas;
+            string projectDataString = FileHelper.ReadFile(Strings.saveDirectory + saveFileName);
             if (projectDataString != null) projectDataList = FileHelper.FromJson<List<ProjectData>>(projectDataString);
             projectDataList = projectDataList ?? new List<ProjectData>();
 
@@ -39,9 +45,8 @@ namespace codingBlock
 
         private void SelectProjectForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            string projectDataString = FileHelper.ToJson<List<ProjectData>>(projectDataList);
-            Properties.Settings.Default.projectDatas = projectDataString;
-            Properties.Settings.Default.Save();
+            string projectsDataString = FileHelper.ToJson<List<ProjectData>>(projectDataList);
+            FileHelper.WriteFile(Strings.saveDirectory + saveFileName, projectsDataString);
         }
 
         #endregion

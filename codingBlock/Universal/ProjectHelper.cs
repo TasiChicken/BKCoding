@@ -142,6 +142,17 @@ namespace codingBlock
     {
         public const string fileNameExtension = "bcfk";
 
+
+        public static string saveDirectory
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\BCFK";
+                Directory.CreateDirectory(path);
+                return path + "\\";
+            }
+        }
+
         public static bool Contains(string content, string keyword, bool ignoreCase = true)
         {
             return content.IndexOf(keyword, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture) >= 0;
@@ -169,14 +180,14 @@ namespace codingBlock
 
     internal class FileHelper
     {
-        public static string ReadFile(string fileFullPath)
+        public static string ReadFile(string filePath)
         {
             string content;
             try
             {
-                content = File.ReadAllText(fileFullPath);
+                content = File.ReadAllText(filePath);
             }
-            catch (Exception e)
+            catch
             {
                 content = null;
             }
@@ -185,13 +196,13 @@ namespace codingBlock
             return content;
         }
 
-        public static void WriteFile(string fileFullPath, string content)
+        public static void WriteFile(string filePath, string content)
         {
             //encryption
 
             try
             {
-                File.WriteAllText(fileFullPath, content);
+                File.WriteAllText(filePath, content);
             }
             catch (Exception e)
             {

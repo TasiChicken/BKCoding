@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
 
 namespace codingBlock
 {
@@ -15,6 +16,9 @@ namespace codingBlock
         private const int _playBtnPadding = 5;
         private const int mainPnlMinWidth = 150;
         private const string mainCode = "int main()";
+        private const string defaultCFilename = "test.c";
+        private const string defaultExeFilename = "test.exe";
+        private const string gccLocation = "TDM-GCC-64\\bin\\gcc.exe";
 
         #endregion
 
@@ -101,7 +105,23 @@ namespace codingBlock
 
         private void _playBtn_Click(object sender, EventArgs e)
         {
+            FileHelper.WriteFile(Strings.saveDirectory + defaultCFilename, convertToCode());
+            var compiler = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = gccLocation,
+                    Arguments = $"-o {Strings.saveDirectory + defaultExeFilename} {Strings.saveDirectory + defaultCFilename}",
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
             
+            compiler.Start();
+            string error = compiler.StandardError.ReadToEnd();
+            if (!string.IsNullOrWhiteSpace(error)) MessageDialog.Show(error);
+            else Process.Start(Strings.saveDirectory + defaultExeFilename).WaitForExit();
         }
 
         #endregion
@@ -133,7 +153,27 @@ namespace codingBlock
 
         private void _exportExeFileCmsi_Click(object sender, EventArgs e)
         {
+            FileHelper.WriteFile(Strings.saveDirectory + defaultCFilename, convertToCode());
 
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "Executable File | *.exe";
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+
+            var compiler = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = gccLocation,
+                    Arguments = $"-o {dialog.FileName} {Strings.saveDirectory + defaultCFilename}",
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            compiler.Start();
+            string error = compiler.StandardError.ReadToEnd();
+            if (!string.IsNullOrWhiteSpace(error)) MessageDialog.Show(error);
         }
 
         #endregion
@@ -275,7 +315,7 @@ namespace codingBlock
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendLine($"#include<{"stdio.h"}>");
-            builder.Append(mainBlock.ToString().Replace("&&", "&"));
+            builder.Append(mainBlock.ToString());
             return builder.ToString();
         }
 
