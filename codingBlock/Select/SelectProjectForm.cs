@@ -162,11 +162,6 @@ namespace codingBlock
 
         #region Internal
 
-        internal SelectProjectForm()
-        {
-            InitializeComponent();
-        }
-
         internal SelectProjectForm(string selectedFile)
         {
             this.selectedFile = selectedFile;

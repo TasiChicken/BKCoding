@@ -1,10 +1,15 @@
+前置@#$585858
+N#include $
+N#define $ $
 資料@#$871317
-N#
-I# #
-I#[#]
-Iunsigned #
-Isigned #
-I#*
+N$
+I$ $
+I$ = $
+I$[$]
+Iunsigned $
+Isigned $
+I$*
+Ivoid
 Ichar
 Iint
 Ishort
@@ -18,69 +23,73 @@ Istruct
 Iunion
 Ienum
 運算子@#$8e4d0d
-N#
-I#++
-I#--
-I#.#
-I#->#
-I++#
-I--#
-I+#
-I-#
-I!#
-I~#
-I(#)#
-I*#
-I&&#
-Isizeof(#)
-I# * #
-I# / #
-I# % #
-I# + #
-I# - #
-I# << #
-I# >> #
-I# < #
-I# <= #
-I# > #
-I# >= #
-I# == #
-I# != #
-I# && #
-I# ^ #
-I# | #
-I# &&&& #
-I# || #
-I# ? # : #
-I# = #
-I# += #
-I# -= #
-I# *= #
-I# /= #
-I# %= #
-I# <<= #
-I# >>= #
-I# &&= #
-I# ^= #
-I# |= #
-Ithrow #
-I#, #
+N$
+I($)
+I$++
+I$--
+I$.$
+I$->$
+I++$
+I--$
+I+$
+I-$
+I!$
+I~$
+I($)$
+I*$
+I&$
+Isizeof($)
+I$ * $
+I$ / $
+I$ % $
+I$ + $
+I$ - $
+I$ << $
+I$ >> $
+I$ < $
+I$ <= $
+I$ > $
+I$ >= $
+I$ == $
+I$ != $
+I$ & $
+I$ ^ $
+I$ | $
+I$ && $
+I$ || $
+I$ ? $ : $
+I$ = $
+I$ += $
+I$ -= $
+I$ *= $
+I$ /= $
+I$ %= $
+I$ <<= $
+I$ >>= $
+I$ &= $
+I$ ^= $
+I$ |= $
+Ithrow $
+I$, $
 選擇@#$857b02
-Cif (#)
-Celse if (#)
+Cif ($)
+Celse if ($)
 Celse
-Cswitch (#)
-Ncase #:
+Cswitch ($)
+Ncase $:
 Nbreak
 迴圈@#$00823c
-Cwhile (#)
+Cwhile ($)
 Cdo
-Nwhile (#)
-Cfor (#; #; #)
+Nwhile ($)
+Cfor ($; $; $)
 Nbreak
 Ncontinue
 函式@#$3a3086
-Nreturn #
+C$ $($)
+N$ $($)
+Nreturn $
+N$($)
 stdio.h@#$801d64
 Isize_t
 IFILE
@@ -101,48 +110,48 @@ ITMP_MAX
 Istderr
 Istdin
 Istdout
-Nremove(#)
-Nrename(#, #)
+Nremove($)
+Nrename($, $)
 Ntmpfile()
-Ntmpnam(#)
-Nfclose(#)
-Nfflush(#)
-Nfopen(#, #)
-Nfreopen(#, #, #)
-Nsetbuf(#, #)
-Nsetvbuf(#, #, #, #)
-Nfprintf(#, #)
-Nfscanf(#, #)
-Nprintf(#)
-Nscanf(#, #)
-Nsnprintf(#, #, #)
-Nsprintf(#, #)
-Nsscanf(#, #)
-Nvfprintf(#, #, #)
-Nvfscanf(#, #, #)
-Nvprintf(#, #)
-Nvscanf(#, #)
-Nvsnprintf(#, #, #, #)
-Nvsprintf(#, #, #)
-Nvsscanf(#, #, #)
-Nfgetc(#)
-Nfgets(#, #, #)
-Nfputc(#, #)
-Nfputs(#, #)
-Ngetc(#)
+Ntmpnam($)
+Nfclose($)
+Nfflush($)
+Nfopen($, $)
+Nfreopen($, $, $)
+Nsetbuf($, $)
+Nsetvbuf($, $, $, $)
+Nfprintf($, $)
+Nfscanf($, $)
+Nprintf($)
+Nscanf($, $)
+Nsnprintf($, $, $)
+Nsprintf($, $)
+Nsscanf($, $)
+Nvfprintf($, $, $)
+Nvfscanf($, $, $)
+Nvprintf($, $)
+Nvscanf($, $)
+Nvsnprintf($, $, $, $)
+Nvsprintf($, $, $)
+Nvsscanf($, $, $)
+Nfgetc($)
+Nfgets($, $, $)
+Nfputc($, $)
+Nfputs($, $)
+Ngetc($)
 Ngetchar()
-Nputc(#, #)
+Nputc($, $)
 Nputchar(Nc)
-Nputs(#)
-Nungetc(#, #)
-Nfread(#, #, #, #)
-Nfwrite(#, #, #, #)
-Nfgetpos(#, #)
-Nfseek(#, #, #)
-Nfsetpos(#, #)
-Nftell(#)
-Nrewind(#)
-Nclearerr(#)
-Nfeof(#)
-Nferror(#)
-Nperror(#)
+Nputs($)
+Nungetc($, $)
+Nfread($, $, $, $)
+Nfwrite($, $, $, $)
+Nfgetpos($, $)
+Nfseek($, $, $)
+Nfsetpos($, $)
+Nftell($)
+Nrewind($)
+Nclearerr($)
+Nfeof($)
+Nferror($)
+Nperror($)

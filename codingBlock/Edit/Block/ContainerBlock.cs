@@ -16,6 +16,8 @@ namespace codingBlock
 
         #region Field
 
+        private bool showBraces => this.code != EditForm.codingAreaTitle;
+
         private LinkedList<CodeBlock> children = new LinkedList<CodeBlock>();
 
         #endregion
@@ -36,6 +38,9 @@ namespace codingBlock
             using (Brush brush = new SolidBrush(this.ForeColor))
             {
                 e.Graphics.FillRectangle(brush, blank, height * 2, this.Width - blank, this.Height - height * 3);
+
+                if (!showBraces) return;
+
                 e.Graphics.DrawString("{", this.Font, brush, padding, height + padding);
                 e.Graphics.DrawString("}", this.Font, brush, padding, this.Height - height + padding);
             }
@@ -117,14 +122,17 @@ namespace codingBlock
                 }
         }
 
-        public override string ToString()
+        public override string ToString(int indent = -1)
         {
-            StringBuilder builder = new StringBuilder(base.ToString());
-            builder.AppendLine();
-            builder.AppendLine(indent + "{");
+            StringBuilder builder = new StringBuilder();
+            if (showBraces)
+            {
+                builder.AppendLine(base.ToString(indent));
+                builder.AppendLine(getIndent(indent) + "{");
+            }
             foreach (var v in children)
-                builder.AppendLine(v.ToString());
-            builder.Append(indent + "}");
+                builder.AppendLine(v.ToString(indent + 1));
+            if (showBraces) builder.AppendLine(getIndent(indent) + "}");
             return builder.ToString();
         }
 

@@ -16,7 +16,6 @@ namespace codingBlock
         #region Field
 
         private DragType dragType;
-        private string code;
         private Label[] codeLbls;
         private InputBox[] inputBoxes;
         private InputBox.SaveData[] inputBlocksSaveData;
@@ -24,40 +23,15 @@ namespace codingBlock
         private bool isDragging = false;
         private bool _onTrashCan = true;
         private ContainerBlock _parentBlock;
-        protected ContainerBlock parentBlock
-        {
-            get
-            {
-                return _parentBlock;
-            }
-            set
-            {
-                if (_parentBlock != value && _parentBlock != null) _parentBlock.RemoveChild(this);
-                _parentBlock = value;
-            }
-        }
-        protected string indent
-        {
-            get
-            {
-                StringBuilder builder = new StringBuilder();
-                var parent = parentBlock;
-                while (parent != null)
-                {
-                    parent = parent.parentBlock;
-                    builder.Append('\t');
-                }
-                return builder.ToString();
-            }
-        }
-
+        protected string code;
+        
         #endregion
 
         #region Event
 
         private void CodeBlock_Load(object sender, EventArgs e)
         {
-            string[] codes = code.Split('#');
+            string[] codes = code.Replace("&", "&&").Split('$');
 
             codeLbls = new Label[codes.Length];
             bool unmoveable = dragType != DragType.normal;
@@ -204,11 +178,30 @@ namespace codingBlock
             parentBlock.InsertChild(this);
         }
 
+        protected string getIndent(int length)
+        {
+            if (length <= 0) return "";
+            return "".PadLeft(length, '\t');
+        }
+
         #endregion
 
         #region Internal
 
         internal const int height = 36;
+
+        internal ContainerBlock parentBlock
+        {
+            get
+            {
+                return _parentBlock;
+            }
+            set
+            {
+                if (_parentBlock != value && _parentBlock != null) _parentBlock.RemoveChild(this);
+                _parentBlock = value;
+            }
+        }
 
         protected internal enum DragType
         {
@@ -273,9 +266,9 @@ namespace codingBlock
             return new SaveData(this.GetType(), this.BackColor, this.code, this.dragType, this.Location, inputBlocksSaveData);
         }
 
-        public override string ToString()
+        public virtual string ToString(int indent = -1)
         {
-            StringBuilder builder = new StringBuilder(indent);
+            StringBuilder builder = new StringBuilder(getIndent(indent));
             for (int i = 0; i < codeLbls.Length; i++)
             {
                 builder.Append(codeLbls[i].Text.Replace("&&", "&"));

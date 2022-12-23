@@ -15,7 +15,6 @@ namespace codingBlock
         
         private const int _playBtnPadding = 5;
         private const int mainPnlMinWidth = 150;
-        private const string mainCode = "int main()";
         private const string defaultCFilename = "test.c";
         private const string defaultExeFilename = "test.exe";
         private const string gccLocation = "TDM-GCC-64\\bin\\gcc.exe";
@@ -24,7 +23,7 @@ namespace codingBlock
 
         #region Field
 
-        private ContainerBlock mainBlock;
+        private ContainerBlock codingArea;
         private ProjectData _projectData;
         private SelectProjectForm selectProjectForm;
         private bool _hasSaved;
@@ -57,8 +56,8 @@ namespace codingBlock
                 {
                     CodeBlock codeBlock = saveData.ToCodeBlock();
 
-                    if (saveData.code.Equals(mainCode))
-                        mainBlock = codeBlock as ContainerBlock;
+                    if (saveData.code.Equals(codingAreaTitle))
+                        codingArea = codeBlock as ContainerBlock;
 
                     this.Controls.Add(codeBlock);
                     codeBlock.Location = saveData.location;
@@ -69,12 +68,30 @@ namespace codingBlock
             }
             else
             {
-                mainBlock = new ContainerBlock(Color.FromArgb(58, 48, 134), mainCode, CodeBlock.DragType.unmovable);
-                this.Controls.Add(mainBlock);
-                mainBlock.BringToFront();
-            }
+                codingArea = new ContainerBlock(Color.FromArgb(0, 0, 0), codingAreaTitle, CodeBlock.DragType.unmovable);
+                this.Controls.Add(codingArea);
+                codingArea.BringToFront();
+                codingArea.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
 
-            mainBlock.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
+                ContainerBlock intMain = new ContainerBlock(Color.FromArgb(58, 48, 134), "int main()");
+                this.Controls.Add(intMain);
+                intMain.BringToFront();
+                codingArea.InsertChild(intMain);
+                intMain.parentBlock = codingArea;
+
+                CodeBlock codeBlock;
+                codeBlock = new CodeBlock(Color.FromArgb(58, 48, 134), "return 0;");
+                this.Controls.Add(codeBlock);
+                codeBlock.BringToFront();
+                intMain.InsertChild(codeBlock);
+                codeBlock.parentBlock = intMain;
+
+                codeBlock = new CodeBlock(Color.FromArgb(88, 88, 88), "#include <stdio.h>");
+                this.Controls.Add(codeBlock);
+                codeBlock.BringToFront();
+                codingArea.InsertChild(codeBlock);
+                codeBlock.parentBlock = codingArea;
+            }
         }
 
         private void EditForm_ControlAdded(object sender, ControlEventArgs e)
@@ -89,8 +106,8 @@ namespace codingBlock
             if (_blocksPnl.Width > maxWidth) _blocksPnl.Width = maxWidth;
             else if (_blocksPnl.Width < mainPnlMinWidth) _blocksPnl.Width = mainPnlMinWidth;
 
-            if (mainBlock != null)
-                mainBlock.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
+            if (codingArea != null)
+                codingArea.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
         }
 
         #region Menu Strip
@@ -105,13 +122,13 @@ namespace codingBlock
 
         private void _playBtn_Click(object sender, EventArgs e)
         {
-            FileHelper.WriteFile(Strings.saveDirectory + defaultCFilename, convertToCode());
+            FileHelper.WriteFile(Strings.saveDirectory + defaultCFilename, codingArea.ToString());
             var compiler = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = gccLocation,
-                    Arguments = $"-o {Strings.saveDirectory + defaultExeFilename} {Strings.saveDirectory + defaultCFilename}",
+                    FileName = Application.StartupPath + "\\" + gccLocation,
+                    Arguments = $"-o {Strings.saveDirectory + defaultExeFilename} {Strings.saveDirectory + defaultCFilename} -fexec-charset=big5",
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     CreateNoWindow = true
@@ -148,12 +165,12 @@ namespace codingBlock
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "C File | *.c";
             if (dialog.ShowDialog() != DialogResult.OK) return;
-            File.WriteAllText(dialog.FileName, convertToCode());
+            File.WriteAllText(dialog.FileName, codingArea.ToString());
         }
 
         private void _exportExeFileCmsi_Click(object sender, EventArgs e)
         {
-            FileHelper.WriteFile(Strings.saveDirectory + defaultCFilename, convertToCode());
+            FileHelper.WriteFile(Strings.saveDirectory + defaultCFilename, codingArea.ToString());
 
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Executable File | *.exe";
@@ -163,7 +180,7 @@ namespace codingBlock
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = gccLocation,
+                    FileName = Application.StartupPath + "\\" + gccLocation,
                     Arguments = $"-o {dialog.FileName} {Strings.saveDirectory + defaultCFilename}",
                     UseShellExecute = false,
                     RedirectStandardError = true,
@@ -311,14 +328,6 @@ namespace codingBlock
             ChangeBlockType(0);
         }
 
-        private string convertToCode()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"#include<{"stdio.h"}>");
-            builder.Append(mainBlock.ToString());
-            return builder.ToString();
-        }
-
         #endregion
 
         #region Struct
@@ -340,6 +349,9 @@ namespace codingBlock
         #region Internal
 
         internal static EditForm instance;
+        
+        internal const string codingAreaTitle = "編譯區域";
+
         internal bool hasSaved
         {
             get
@@ -383,7 +395,7 @@ namespace codingBlock
                     switch (line[0])
                     {
                         case 'N':
-                            codeBlock = new CodeBlock(color, code + (code.Last() == ':' ? "" : ";"), dragType);
+                            codeBlock = new CodeBlock(color, code + (code.First() == '#' || code.Last() == ':' ? "" : ";"), dragType);
                             break;
                         case 'I':
                             codeBlock = new DataBlock(color, code, dragType);

@@ -475,18 +475,28 @@ namespace codingBlock
 
             if(e.Delta > 0)
             {
-                int maxDelta = -container.Controls[0].Top;
+                int maxDelta = int.MaxValue;
+                foreach (Control control in container.Controls)
+                    if (control.Visible)
+                        maxDelta = Math.Min(maxDelta, control.Top);
+                maxDelta = -maxDelta;
                 if (maxDelta <= 0) return;
                 if (delta > maxDelta) delta = maxDelta;
             }
             if (e.Delta < 0)
             {
-                int minDelta = container.Height - container.Controls[container.Controls.Count - 1].Bottom;
+                int minDelta = 0;
+                foreach (Control control in container.Controls)
+                    if (control.Visible)
+                        minDelta = Math.Max(minDelta, control.Bottom);
+                minDelta = container.Height - minDelta;
                 if (minDelta >= 0) return;
                 if (delta < minDelta) delta = minDelta;
             }
 
-            foreach (Control control in container.Controls) control.Top += delta;
+            foreach (Control control in container.Controls)
+                if (control.Visible)
+                    control.Top += delta;
         }
     }
 }

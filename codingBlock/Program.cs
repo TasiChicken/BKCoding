@@ -17,7 +17,7 @@ namespace codingBlock
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(args.Length > 0 && File.Exists(args[0]) ? new SelectProjectForm(args[0]) : new SelectProjectForm());
+            Application.Run(new SelectProjectForm(args.Length > 0 && File.Exists(args[0]) ? args[0] : null));
         }
     }
 }
