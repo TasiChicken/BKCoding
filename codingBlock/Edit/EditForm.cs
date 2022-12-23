@@ -38,7 +38,9 @@ namespace codingBlock
         private void EditForm_Load(object sender, EventArgs e)
         {
             FormResizer.AddResizer(this);
-            
+
+            this.MouseWheel += EditForm_MouseWheel;
+            this.Layout += EditForm_Layout;
             _blockTypePnl.MouseWheel += EventHandlers.Scrollable_MouseWheel;
             _blocksPnl.MouseWheel += EventHandlers.Scrollable_MouseWheel;
 
@@ -94,10 +96,28 @@ namespace codingBlock
             }
         }
 
+        private void EditForm_Layout(object sender, LayoutEventArgs e)
+        {
+            _header.BringToFront();
+            _menuStripPnl.BringToFront();
+        }
+
+        private void EditForm_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (codingArea.Top >= _menuStripPnl.Bottom && e.Delta > 0) return;
+            if (codingArea.Bottom <= _splitter.Bottom && e.Delta < 0) return;
+
+            codingArea.Top += e.Delta;
+        }
+
         private void EditForm_ControlAdded(object sender, ControlEventArgs e)
         {
             Type type = e.Control.GetType();
-            if (type.Equals(typeof(CodeBlock)) || type.IsSubclassOf(typeof(CodeBlock))) codeBlocks.Add(e.Control as CodeBlock);
+            if (type.Equals(typeof(CodeBlock)) || type.IsSubclassOf(typeof(CodeBlock)))
+            {
+                codeBlocks.Add(e.Control as CodeBlock);
+                e.Control.MouseWheel += EditForm_MouseWheel;
+            }
         }
 
         private void _blocksPnl_Resize(object sender, EventArgs e)
