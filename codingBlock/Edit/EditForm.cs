@@ -73,7 +73,7 @@ namespace codingBlock
                 codingArea = new ContainerBlock(Color.FromArgb(0, 0, 0), codingAreaTitle, CodeBlock.DragType.unmovable);
                 this.Controls.Add(codingArea);
                 codingArea.BringToFront();
-                codingArea.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
+                codingArea.Location = new Point(_blocksPnl.Right + _splitter.Width, _menuStripPnl.Bottom);
 
                 ContainerBlock intMain = new ContainerBlock(Color.FromArgb(58, 48, 134), "int main()");
                 this.Controls.Add(intMain);
