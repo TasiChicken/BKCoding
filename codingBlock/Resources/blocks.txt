@@ -86,10 +86,11 @@ Cfor ($; $; $)
 Nbreak
 Ncontinue
 函式@#$3a3086
+N$
+I$($)
 C$ $($)
 N$ $($)
 Nreturn $
-N$($)
 stdio.h@#$801d64
 Isize_t
 IFILE
