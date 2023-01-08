@@ -142,7 +142,6 @@ namespace codingBlock
     {
         public const string fileNameExtension = "bcfk";
 
-
         public static string saveDirectory
         {
             get

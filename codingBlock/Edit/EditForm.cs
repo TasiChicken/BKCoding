@@ -18,6 +18,7 @@ namespace codingBlock
         private const string defaultCFilename = "test.c";
         private const string defaultExeFilename = "test.exe";
         private const string gccLocation = "TDM-GCC-64\\bin\\gcc.exe";
+        private const string blockListFileName = "blocks.txt";
 
         #endregion
 
@@ -106,6 +107,8 @@ namespace codingBlock
         {
             if (codingArea.Top >= _menuStripPnl.Bottom && e.Delta > 0) return;
             if (codingArea.Bottom <= _splitter.Bottom && e.Delta < 0) return;
+            
+            if (Vector2Helper.Compare(this.PointToClient(Cursor.Position), new Point(_splitter.Right, _menuStripPnl.Bottom)) != CompareResult.More) return;
 
             codingArea.Top += e.Delta;
         }
@@ -114,10 +117,7 @@ namespace codingBlock
         {
             Type type = e.Control.GetType();
             if (type.Equals(typeof(CodeBlock)) || type.IsSubclassOf(typeof(CodeBlock)))
-            {
                 codeBlocks.Add(e.Control as CodeBlock);
-                e.Control.MouseWheel += EditForm_MouseWheel;
-            }
         }
 
         private void _blocksPnl_Resize(object sender, EventArgs e)
@@ -127,7 +127,7 @@ namespace codingBlock
             else if (_blocksPnl.Width < mainPnlMinWidth) _blocksPnl.Width = mainPnlMinWidth;
 
             if (codingArea != null)
-                codingArea.Location = new Point(_blocksPnl.Right + _splitter.Width, _blocksPnl.Top);
+                codingArea.Location = new Point(_blocksPnl.Right + _splitter.Width, _menuStripPnl.Bottom);
         }
 
         #region Menu Strip
@@ -395,7 +395,7 @@ namespace codingBlock
 
             this.ControlAdded += EditForm_ControlAdded;
 
-            StringReader reader = new StringReader(Properties.Resources.blocks);
+            StringReader reader = new StringReader(FileHelper.ReadFile(Application.StartupPath + "\\" + blockListFileName));
             string line;
             while ((line = reader.ReadLine()) != null)
                 if (line.Contains("@#$"))
