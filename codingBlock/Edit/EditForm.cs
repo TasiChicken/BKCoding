@@ -443,11 +443,6 @@ namespace codingBlock
                 foreach(var block in blockLists[i]) block.Visible = i == index;
             }
 
-            /*
-            _blocksPnl.BorderStyle = BorderStyle.None;
-            _splitter.BackColor = Colors.Black26;
-            _splitter.Width = 10;
-            */
         }
 
         internal bool InCodeRegion(CodeBlock codeBlock)
